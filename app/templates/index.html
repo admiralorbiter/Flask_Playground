@@ -54,7 +54,7 @@
           <tbody id="new-project" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
             {% for project in projects %}
             <tr>
-              <td>{{ project.name }}</td>
+              <td><a href="{{ url_for('project_detail', id=project.project_id) }}">{{ project.name }}</a></td>
               <td>
                 {{ project.students[0].name if project.students else 'No lead' }}
               </td>

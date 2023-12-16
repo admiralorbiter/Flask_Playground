@@ -1,0 +1,21 @@
+<!-- project_details.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ project.name }}</title>
+    <!-- Include necessary CSS and JS files -->
+</head>
+<body>
+    <h1>{{ project.name }}</h1>
+    <p><strong>Description:</strong> {{ project.description }}</p>
+    <p><strong>Grade:</strong> {{ project.grade }}</p>
+    <p><strong>Lead Student:</strong> {{ project.lead.name if project.lead else "None" }}</p>
+    <h2>Team Members</h2>
+    <ul>
+        {% for student in project.students %}
+            <li>{{ student.name }}</li>
+        {% endfor %}
+    </ul>
+    <!-- Add navigation links or buttons -->
+</body>
+</html>

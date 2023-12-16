@@ -128,3 +128,8 @@ def update(id):
     </tr>
     """
   return response
+
+@app.route("/project/<int:id>", methods=["GET"])
+def project_detail(id):
+    project = Project.query.get_or_404(id)
+    return render_template("project_details.html", project=project)
