@@ -82,13 +82,12 @@ def delete_project(id):
 @app.route("/get-edit-form/<int:id>", methods=["GET"])
 def get_edit_form(id):
   project = Project.query.get(id)
-  student = Student.query.get(project.student_id)
+  
   response = f"""
-    <tr hx-trigger='cancel' class='editing' hx-get="/get-book-row/{id}">
-    <td><input name="title" value="{project.title}"/></td>
-    <td>{student.name}</td>
+    <tr hx-trigger='cancel' class='editing' hx-get="/get-project-row/{id}">
+    <td><input name="title" value="{project.name}"/></td>
     <td>
-    <button class="btn btn-primary" hx-get="/get-book-row/{id}">
+    <button class="btn btn-primary" hx-get="/get-project-row/{id}">
         Cancel
     </button>
     <button class="btn btn-primary" hx-put="/update/{id}" hx-include="closest tr">
