@@ -67,6 +67,10 @@
               </td>
               <td>
                 <!-- Your buttons for Edit and Delete -->
+                <!-- Delete Button -->
+                <button class="btn btn-danger" hx-delete="/delete/{{ project.project_id }}">
+                    Delete
+                </button>
               </td>
             </tr>
             {% endfor %}

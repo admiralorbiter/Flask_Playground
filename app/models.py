@@ -9,10 +9,11 @@ class Student(db.Model):
     student_id=db.Column(db.Integer, primary_key=True)
     name=db.Column(db.String)
     projects = db.relationship('Project', secondary=project_students, backref=db.backref('students', lazy='dynamic'))
-
+    lead_projects = db.relationship('Project', backref='lead', lazy=True)
 
 class Project(db.Model):
     project_id=db.Column(db.Integer, primary_key=True)
     name=db.Column(db.String)
     description=db.Column(db.String)
     grade=db.Column(db.Integer)
+    lead_student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'))

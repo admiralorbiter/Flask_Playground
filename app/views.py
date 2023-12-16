@@ -9,61 +9,46 @@ def home():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-  
     name = request.form["title"]
-    student_name = request.form["lead"]
-    team = request.form["team"]
-    print(name, student_name, team)
-    team_member_list = []
+    lead_name = request.form["lead"]
+    team_names = request.form["team"].split(',')
+
     # Create a new project
     project = Project(name=name)
 
-    def add_student_to_project(student_name):
-
-        # Check if the student already exists in the database
-        student = Student.query.filter_by(name=student_name).first()
-
+    # Function to add a student to the project
+    def add_student(name):
+        student = Student.query.filter_by(name=name.strip()).first()
         if not student:
-            # If the student doesn't exist, create a new one
-            student = Student(name=student_name)
-            print(student)
+            student = Student(name=name.strip())
             db.session.add(student)
-        
-        project.students.append(student)
+        return student
 
-    # Add the lead student to the project
-    add_student_to_project(student_name)
+    # Set the lead student
+    lead_student = add_student(lead_name)
+    project.lead = lead_student
 
-    if team:
-        team_member_list = [name.strip() for name in team.split(',')]
-        for member_name in team_member_list:
-            add_student_to_project(member_name)
+    # Add other team members
+    for member_name in team_names:
+        if member_name.strip() and member_name.strip() != lead_name:
+            project.students.append(add_student(member_name))
 
     db.session.add(project)
     db.session.commit()
 
-    # Assuming you're using global_project_object for a specific purpose
-    global_project_object = project
-
-    # Generate list of team member names for the response
     team_member_names = ', '.join([student.name for student in project.students])
 
     response = f"""
     <tr>
-        <td>{name}</td>
-        <td>{student_name}</td>
-        <td>
-             {team_member_names}
-        </td>
+        <td>{project.name}</td>
+        <td>{lead_student.name}</td>
+        <td>{team_member_names}</td>
         <td>
             <button class="btn btn-primary"
-                hx-get="/get-edit-form/{global_project_object.project_id}">
+                hx-get="/get-edit-form/{project.project_id}">
                 Edit Title
             </button>
-            <button class="btn btn-secondary" hx-get="/edit-team/{{ project.id }}">
-                Edit Team
-            </button>
-            <button hx-delete="/delete/{global_project_object.project_id}"
+            <button hx-delete="/delete/{project.project_id}"
                 class="btn btn-primary">
                 Delete
             </button>
@@ -100,43 +85,41 @@ def get_edit_form(id):
 
 @app.route("/get-project-row/<int:id>", methods=["GET"])
 def get_project_row(id):
-  project = Project.query.get(id)
-  student = Student.query.get(project.student_id)
-  response = f"""
+    project = Project.query.get(id)
+    team_member_names = ', '.join([student.name for student in project.students])
+    response = f"""
     <tr>
-    <td>{project.name}</td>
-    <td>{student.name}</td>
-    <td>
-    <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
-        Edit Title
-    </button>
-    </td>
-    <td>
-    <button hx-delete="/delete/{id}"
-        class="btn btn-primary">
-        Delete
-    </button>
-    </td>
+        <td>{project.name}</td>
+        <td>{project.lead.name if project.lead else 'No lead'}</td>
+        <td>{team_member_names}</td>
+        <td>
+            <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
+                Edit Title
+            </button>
+             <button hx-delete="/delete/{project.project_id}"
+                class="btn btn-primary">
+                Delete
+            </button>
+        </td>
     </tr>
     """
-  return response
+    return response
 
 @app.route("/update/<int:id>", methods=["PUT"])
 def update(id):
   project = Project.query.get(id)
-  student = Student.query.get(project.student_id)
   project.name = request.form["title"]
+  team_member_names = ', '.join([student.name for student in project.students])
   db.session.commit()
   response = f"""
     <tr>
     <td>{project.name}</td>
-    <td>{student.name}</td>
+    <td>{project.lead.name if project.lead else 'No lead'}</td>
+    <td>{team_member_names}</td>
     <td>
     <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
         Edit Title
     </button>
-    </td>
-    <td>
     <button hx-delete="/delete/{id}"
         class="btn btn-primary">
         Delete
