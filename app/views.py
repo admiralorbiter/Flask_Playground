@@ -90,7 +90,7 @@ def get_project_row(id):
     response = f"""
     <tr>
         <td>{project.name}</td>
-        <td>{project.lead.name if project.lead else 'No lead'}</td>
+        <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
         <td>{team_member_names}</td>
         <td>
             <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
@@ -114,7 +114,7 @@ def update(id):
   response = f"""
     <tr>
     <td>{project.name}</td>
-    <td>{project.lead.name if project.lead else 'No lead'}</td>
+    <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
     <td>{team_member_names}</td>
     <td>
     <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
