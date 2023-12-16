@@ -4,54 +4,73 @@ from app.models import Student, Project
 
 @app.route("/", methods=["GET"])
 def home():
-  projects = db.session.query(Project, Student).filter(Project.student_id == Student.student_id).all()
+  projects = Project.query.all()
   return render_template("index.html", projects=projects)
 
 @app.route("/submit", methods=["POST"])
 def submit():
   
-  global_project_object = Project()
-  name = request.form["title"]
-  student_name = request.form["lead"]
-  student_exists = db.session.query(Student).filter(Student.name == student_name).first()
-  print(student_exists)
-  # check if student already exists in db
-  if student_exists:
-    student_id = student_exists.student_id
-    project = Project(student_id=student_id, name=name)
+    name = request.form["title"]
+    student_name = request.form["lead"]
+    team = request.form["team"]
+    print(name, student_name, team)
+    team_member_list = []
+    # Create a new project
+    project = Project(name=name)
+
+    def add_student_to_project(student_name):
+
+        # Check if the student already exists in the database
+        student = Student.query.filter_by(name=student_name).first()
+
+        if not student:
+            # If the student doesn't exist, create a new one
+            student = Student(name=student_name)
+            print(student)
+            db.session.add(student)
+        
+        project.students.append(student)
+
+    # Add the lead student to the project
+    add_student_to_project(student_name)
+
+    if team:
+        team_member_list = [name.strip() for name in team.split(',')]
+        for member_name in team_member_list:
+            add_student_to_project(member_name)
+
     db.session.add(project)
     db.session.commit()
-    global_project_object = project
-  else:
-    student = Student(name=student_name)
-    db.session.add(student)
-    db.session.commit()
 
-    project = Project(student_id=student.student_id, name=name)
-    db.session.add(project)
-    db.session.commit()
+    # Assuming you're using global_project_object for a specific purpose
     global_project_object = project
 
+    # Generate list of team member names for the response
+    team_member_names = ', '.join([student.name for student in project.students])
 
-  response = f"""
-  <tr>
-      <td>{name}</td>
-      <td>{student_name}</td>
-      <td>
-          <button class="btn btn-primary"
-              hx-get="/get-edit-form/{global_project_object.project_id}">
-              Edit Title
-          </button>
-      </td>
-      <td>
-          <button hx-delete="/delete/{global_project_object.project_id}"
-              class="btn btn-primary">
-              Delete
-          </button>
-      </td>
-  </tr>
-  """
-  return response
+    response = f"""
+    <tr>
+        <td>{name}</td>
+        <td>{student_name}</td>
+        <td>
+             {team_member_names}
+        </td>
+        <td>
+            <button class="btn btn-primary"
+                hx-get="/get-edit-form/{global_project_object.project_id}">
+                Edit Title
+            </button>
+            <button class="btn btn-secondary" hx-get="/edit-team/{{ project.id }}">
+                Edit Team
+            </button>
+            <button hx-delete="/delete/{global_project_object.project_id}"
+                class="btn btn-primary">
+                Delete
+            </button>
+        </td>
+    </tr>
+    """
+    return response
 
 @app.route("/delete/<int:id>", methods=["DELETE"])
 def delete_project(id):
