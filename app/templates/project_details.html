@@ -17,7 +17,7 @@
     <p><strong>Feedback:</strong> {{ project.feedback }}</p>
     <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
     <p><strong>Priority:</strong> {{ project.priority }}</p>
-    <p><strong>Progress:</strong> {{ project.progress }}</p>
+    <p><strong>Progress:</strong> {{ project.progress }}%</p>
     <p><strong>Short Description:</strong> {{ project.short_description }}</p>
 
     <p><strong>Lead Student:</strong> {{ project.project_lead.name if project.project_lead else "None" }}</p>

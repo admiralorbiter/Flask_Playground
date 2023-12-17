@@ -1,6 +1,7 @@
 from app import app, db
 from flask import render_template, request, jsonify, redirect, url_for, flash
 from app.models import Student, Project
+from datetime import datetime
 
 
 @app.route("/", methods=["GET"])
@@ -14,30 +15,35 @@ def submit():
     lead_name = request.form["lead"]
     team_names = request.form["team"].split(',')
 
-    # Create a new project
-    project = Project(name=name)
-
     # Function to add a student to the project
     def add_student(name):
         student = Student.query.filter_by(name=name.strip()).first()
         if not student:
             student = Student(name=name.strip())
             db.session.add(student)
+            db.session.flush()  # Ensure the student gets an ID if it's a new entry
         return student
+
+    # Create a new project
+    project = Project(name=name)
 
     # Set the lead student
     lead_student = add_student(lead_name)
-    project.lead = lead_student
+    project.project_lead = lead_student  # Use the backref from the Student model
+
+    # Default Values
+    project.progress = 0
 
     # Add other team members
     for member_name in team_names:
         if member_name.strip() and member_name.strip() != lead_name:
-            project.students.append(add_student(member_name))
+            project.team_members.append(add_student(member_name))
 
     db.session.add(project)
     db.session.commit()
 
-    team_member_names = ', '.join([student.name for student in project.students])
+    # Prepare team member names for the response
+    team_member_names = ', '.join([student.name for student in project.team_members])
 
     response = f"""
     <tr>
@@ -149,7 +155,13 @@ def update_project(id):
         project.feedback = request.form.get('feedback')
         project.due_date = datetime.strptime(request.form.get('due_date'), '%Y-%m-%d') if request.form.get('due_date') else None
         project.priority = request.form.get('priority')
-        project.progress = request.form.get('progress')
+        progress = request.form.get('progress', type=int)
+        if progress is not None:
+            project.progress = progress
+        else:
+            flash('Progress must be an integer between 0 and 100', 'error')
+            return redirect(url_for('project_detail', id=id))
+
         project.short_description = request.form.get('short_description')
 
         # Save changes to the database

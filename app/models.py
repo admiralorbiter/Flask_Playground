@@ -9,10 +9,17 @@ project_students = db.Table('project_students',
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    projects = db.relationship('Project', secondary=project_students, 
-                               backref=backref('team_members', lazy='dynamic', overlaps="students,lead_for_projects"))
-    lead_for_projects = db.relationship('Project', backref=backref('project_lead', lazy=True, uselist=False, overlaps="team_members,students"))
 
+    # Relationship where student is a team member
+    projects = db.relationship('Project', secondary=project_students, 
+                               backref=backref('team_members', lazy='dynamic', overlaps="participating_projects"))
+
+    # Relationship for projects where student is participating (possibly in a different role)
+    participating_projects = db.relationship('Project', secondary=project_students, 
+                                             backref=backref('participating_students', lazy='dynamic', overlaps="projects,team_members"))
+
+    # Relationship for projects where student is the lead
+    lead_for_projects = db.relationship('Project', backref=backref('project_lead', lazy=True, uselist=False, overlaps="team_members,participating_students"))
 
 class Project(db.Model):
     project_id = db.Column(db.Integer, primary_key=True)
@@ -23,7 +30,7 @@ class Project(db.Model):
     comments = db.Column(db.Text)
     feedback = db.Column(db.Text)
     due_date = db.Column(db.DateTime)
-    priority = db.Column(db.String)  # Could be an enum or a separate model for predefined priorities
+    priority = db.Column(db.Integer)  # Could be an enum or a separate model for predefined priorities
     progress = db.Column(db.String)  # Could be an enum or percentage
     short_description = db.Column(db.String)
 
@@ -33,4 +40,4 @@ class Project(db.Model):
 
     # Existing relationship with students
     students = db.relationship('Student', secondary=project_students, 
-                               backref=backref('participating_projects', lazy='dynamic'))
+                               backref=backref('member_of_projects', lazy='dynamic', overlaps="team_members,participating_students"))
