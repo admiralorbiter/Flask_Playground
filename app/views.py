@@ -185,6 +185,7 @@ def add_task(project_id):
             name=request.form.get("task_name"),
             description=request.form.get("task_description"),
             # Add other fields as necessary, e.g., due_date, priority
+            progress = 0,
             project_id=project.project_id
         )
 

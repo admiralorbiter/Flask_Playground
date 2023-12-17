@@ -6,31 +6,7 @@
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.5.0"></script>
-    <style>
-        body{
-            padding: 20px;
-        }
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        tr.htmx-swapping td {
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
-        }
-
-        td, th {
-            border: 1px solid #383737;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>

@@ -3,6 +3,11 @@
 <head>
     <title>Edit Project - {{ project.name }}</title>
     <!-- Include necessary CSS and JS files -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.5.0"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Project Details - {{ project.name }}</h1>
@@ -65,9 +70,6 @@
 
         <label for="overview">Overview:</label>
         <textarea id="overview" name="overview">{{ project.overview }}</textarea>
-
-        <label for="tasks">Tasks:</label>
-        <textarea id="tasks" name="tasks">{{ project.tasks }}</textarea>
 
         <label for="links">Links:</label>
         <textarea id="links" name="links">{{ project.links }}</textarea>
