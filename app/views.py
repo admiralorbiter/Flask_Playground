@@ -1,6 +1,7 @@
 from app import app, db
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, redirect, url_for, flash
 from app.models import Student, Project
+
 
 @app.route("/", methods=["GET"])
 def home():
@@ -133,3 +134,32 @@ def update(id):
 def project_detail(id):
     project = Project.query.get_or_404(id)
     return render_template("project_details.html", project=project)
+
+@app.route("/project/update/<int:id>", methods=["POST"])
+def update_project(id):
+    project = Project.query.get_or_404(id)
+
+    try:
+        # Update project's attributes based on form data
+        project.name = request.form.get('name')
+        project.overview = request.form.get('overview')
+        project.tasks = request.form.get('tasks')
+        project.links = request.form.get('links')
+        project.comments = request.form.get('comments')
+        project.feedback = request.form.get('feedback')
+        project.due_date = datetime.strptime(request.form.get('due_date'), '%Y-%m-%d') if request.form.get('due_date') else None
+        project.priority = request.form.get('priority')
+        project.progress = request.form.get('progress')
+        project.short_description = request.form.get('short_description')
+
+        # Save changes to the database
+        db.session.commit()
+
+        flash('Project updated successfully!', 'success')
+    except Exception as e:
+        # Handle errors and roll back any changes
+        db.session.rollback()
+        flash(f'An error occurred: {e}', 'danger')
+
+    # Redirect to a page (e.g., project detail page) or return a response
+    return redirect(url_for('project_detail', id=id))

@@ -1,21 +1,68 @@
-<!-- project_details.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{{ project.name }}</title>
+    <title>Edit Project - {{ project.name }}</title>
     <!-- Include necessary CSS and JS files -->
 </head>
 <body>
-    <h1>{{ project.name }}</h1>
-    <p><strong>Description:</strong> {{ project.description }}</p>
-    <p><strong>Grade:</strong> {{ project.grade }}</p>
-    <p><strong>Lead Student:</strong> {{ project.lead.name if project.lead else "None" }}</p>
-    <h2>Team Members</h2>
+    <h1>Project Details - {{ project.name }}</h1>
+
+    <!-- Display Project Details -->
+    <h2>Project Information</h2>
+    <p><strong>Name:</strong> {{ project.name }}</p>
+    <p><strong>Overview:</strong> {{ project.overview }}</p>
+    <p><strong>Tasks:</strong> {{ project.tasks }}</p>
+    <p><strong>Links:</strong> {{ project.links }}</p>
+    <p><strong>Comments:</strong> {{ project.comments }}</p>
+    <p><strong>Feedback:</strong> {{ project.feedback }}</p>
+    <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
+    <p><strong>Priority:</strong> {{ project.priority }}</p>
+    <p><strong>Progress:</strong> {{ project.progress }}</p>
+    <p><strong>Short Description:</strong> {{ project.short_description }}</p>
+
+    <p><strong>Lead Student:</strong> {{ project.project_lead.name if project.project_lead else "None" }}</p>
+    <h3>Team Members</h3>
     <ul>
         {% for student in project.students %}
             <li>{{ student.name }}</li>
         {% endfor %}
     </ul>
-    <!-- Add navigation links or buttons -->
+
+    <h1>Edit Project - {{ project.name }}</h1>
+
+    <form action="{{ url_for('update_project', id=project.project_id) }}" method="post">
+        <label for="name">Project Name:</label>
+        <input type="text" id="name" name="name" value="{{ project.name }}">
+
+        <label for="overview">Overview:</label>
+        <textarea id="overview" name="overview">{{ project.overview }}</textarea>
+
+        <label for="tasks">Tasks:</label>
+        <textarea id="tasks" name="tasks">{{ project.tasks }}</textarea>
+
+        <label for="links">Links:</label>
+        <textarea id="links" name="links">{{ project.links }}</textarea>
+
+        <label for="comments">Comments:</label>
+        <textarea id="comments" name="comments">{{ project.comments }}</textarea>
+
+        <label for="feedback">Feedback:</label>
+        <textarea id="feedback" name="feedback">{{ project.feedback }}</textarea>
+
+        <!-- Date handling needs proper formatting in Flask -->
+        <label for="due_date">Due Date:</label>
+        <input type="date" id="due_date" name="due_date" value="{{ project.due_date | date_format }}">
+
+        <label for="priority">Priority:</label>
+        <input type="text" id="priority" name="priority" value="{{ project.priority }}">
+
+        <label for="progress">Progress:</label>
+        <input type="text" id="progress" name="progress" value="{{ project.progress }}">
+
+        <label for="short_description">Short Description:</label>
+        <input type="text" id="short_description" name="short_description" value="{{ project.short_description }}">
+
+        <button type="submit">Save Changes</button>
+    </form>
 </body>
 </html>
