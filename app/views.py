@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, jsonify, redirect, url_for, flash
-from app.models import Student, Project
+from app.models import Student, Project, Task
 from datetime import datetime
 
 
@@ -139,7 +139,9 @@ def update(id):
 @app.route("/project/<int:id>", methods=["GET"])
 def project_detail(id):
     project = Project.query.get_or_404(id)
-    return render_template("project_details.html", project=project)
+    tasks = Task.query.filter_by(project_id=id).all()  # Fetch tasks for this project
+    return render_template("project_details.html", project=project, tasks=tasks)
+
 
 @app.route("/project/update/<int:id>", methods=["POST"])
 def update_project(id):
@@ -149,7 +151,6 @@ def update_project(id):
         # Update project's attributes based on form data
         project.name = request.form.get('name')
         project.overview = request.form.get('overview')
-        project.tasks = request.form.get('tasks')
         project.links = request.form.get('links')
         project.comments = request.form.get('comments')
         project.feedback = request.form.get('feedback')
@@ -175,3 +176,41 @@ def update_project(id):
 
     # Redirect to a page (e.g., project detail page) or return a response
     return redirect(url_for('project_detail', id=id))
+
+@app.route("/project/<int:project_id>/add_task", methods=["POST"])
+def add_task(project_id):
+    project = Project.query.get_or_404(project_id)
+    try:
+        new_task = Task(
+            name=request.form.get("task_name"),
+            description=request.form.get("task_description"),
+            # Add other fields as necessary, e.g., due_date, priority
+            project_id=project.project_id
+        )
+
+        db.session.add(new_task)
+        db.session.commit()
+        flash('Task added successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while adding the task: {e}', 'danger')
+
+    return redirect(url_for('project_detail', id=project_id))
+
+@app.route("/task/update/<int:task_id>", methods=["POST"])
+def update_task(task_id):
+    task = Task.query.get_or_404(task_id)
+
+    try:
+        task.name = request.form.get("task_name")
+        task.description = request.form.get("task_description")
+        # Update other fields as necessary, e.g., due_date, priority
+        # You might also need to handle changes in assigned students
+
+        db.session.commit()
+        flash('Task updated successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while updating the task: {e}', 'danger')
+
+    return redirect(url_for('project_detail', id=task.project_id))

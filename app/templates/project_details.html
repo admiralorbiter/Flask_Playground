@@ -11,13 +11,12 @@
     <h2>Project Information</h2>
     <p><strong>Name:</strong> {{ project.name }}</p>
     <p><strong>Overview:</strong> {{ project.overview }}</p>
-    <p><strong>Tasks:</strong> {{ project.tasks }}</p>
     <p><strong>Links:</strong> {{ project.links }}</p>
     <p><strong>Comments:</strong> {{ project.comments }}</p>
     <p><strong>Feedback:</strong> {{ project.feedback }}</p>
     <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
     <p><strong>Priority:</strong> {{ project.priority }}</p>
-    <p><strong>Progress:</strong> {{ project.progress }}%</p>
+    <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
     <p><strong>Short Description:</strong> {{ project.short_description }}</p>
 
     <p><strong>Lead Student:</strong> {{ project.project_lead.name if project.project_lead else "None" }}</p>
@@ -27,6 +26,36 @@
             <li>{{ student.name }}</li>
         {% endfor %}
     </ul>
+
+    <!-- Display Tasks -->
+    <h2>Tasks</h2>
+    {% for task in tasks %}
+    <div>
+        <h4>{{ task.name }}</h4>
+        <p>{{ task.description }}</p>
+        <p>Progress: {{ task.progress }}%</p>
+        <!-- Add other task details here -->
+
+        <!-- Link to update task (assuming you have a separate page for this) -->
+        <a href="{{ url_for('update_task', task_id=task.task_id) }}">Edit Task</a>
+    </div>
+    {% else %}
+    <p>No tasks found for this project.</p>
+    {% endfor %}
+
+    <!-- Form to Add a New Task -->
+    <h3>Add a New Task</h3>
+    <form action="{{ url_for('add_task', project_id=project.project_id) }}" method="post">
+        <label for="task_name">Task Name:</label>
+        <input type="text" id="task_name" name="task_name">
+
+        <label for="task_description">Description:</label>
+        <textarea id="task_description" name="task_description"></textarea>
+
+        <!-- Add other fields for task details -->
+
+        <button type="submit">Add Task</button>
+    </form>
 
     <h1>Edit Project - {{ project.name }}</h1>
 
