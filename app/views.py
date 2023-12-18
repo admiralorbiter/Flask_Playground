@@ -125,6 +125,38 @@ def delete_project(id):
 #     """
 #   return response
 
+@app.route("/task/update/<int:task_id>", methods=["GET", "POST"])
+def update_task(task_id):
+    task = Task.query.get_or_404(task_id)
+
+    if request.method == "GET":
+        # Generate HTML for the edit form
+        edit_form_html = f"""
+            <!-- Create your edit form here -->
+            <form action="{url_for('update_task', task_id=task.task_id)}" method="post">
+                <!-- Add form fields for editing the task -->
+                <input type="text" name="task_name" value="{task.name}">
+                <textarea name="task_description">{task.description}</textarea>
+                <!-- Add other form fields as necessary -->
+                <button type="submit">Update Task</button>
+            </form>
+        """
+        return edit_form_html
+    elif request.method == "POST":
+        try:
+            task.name = request.form.get("task_name")
+            task.description = request.form.get("task_description")
+            # Update other fields as necessary
+            db.session.commit()
+            flash('Task updated successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred while updating the task: {e}', 'danger')
+
+        # After updating the task, you can return a response, such as a redirect
+        return redirect(url_for('project_detail', id=task.project_id))
+
+
 @app.route("/project/<int:id>", methods=["GET"])
 def project_detail(id):
     project = Project.query.get_or_404(id)
@@ -144,7 +176,14 @@ def update_project(id):
         project.comments = request.form.get('comments')
         project.feedback = request.form.get('feedback')
         project.due_date = datetime.strptime(request.form.get('due_date'), '%Y-%m-%d') if request.form.get('due_date') else None
-        project.priority = request.form.get('priority')
+        
+        priority = request.form.get('priority', type=int)
+        if not 1<=priority<=5:
+            flash('Priority must be an integer between 1 and 5', 'error')
+            return redirect(url_for('project_detail', id=id))
+        else:
+            project.priority = priority
+
         progress = request.form.get('progress', type=int)
         if progress is not None:
             project.progress = progress
@@ -186,24 +225,6 @@ def add_task(project_id):
         flash(f'An error occurred while adding the task: {e}', 'danger')
 
     return redirect(url_for('project_detail', id=project_id))
-
-@app.route("/task/update/<int:task_id>", methods=["POST"])
-def update_task(task_id):
-    task = Task.query.get_or_404(task_id)
-
-    try:
-        task.name = request.form.get("task_name")
-        task.description = request.form.get("task_description")
-        # Update other fields as necessary, e.g., due_date, priority
-        # You might also need to handle changes in assigned students
-
-        db.session.commit()
-        flash('Task updated successfully!', 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'An error occurred while updating the task: {e}', 'danger')
-
-    return redirect(url_for('project_detail', id=task.project_id))
 
 @app.route("/add_link", methods=["POST"])
 def add_link():

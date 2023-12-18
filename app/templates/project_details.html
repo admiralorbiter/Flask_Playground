@@ -61,7 +61,8 @@
         <!-- Add other task details here -->
 
         <!-- Link to update task (assuming you have a separate page for this) -->
-        <a href="{{ url_for('update_task', task_id=task.task_id) }}">Edit Task</a>
+        <!-- Button to toggle the edit form -->
+        <a href="{{ url_for('update_task', task_id=task.task_id) }}" class="edit-task-button">Edit Task</a>
     </div>
     {% else %}
     <p>No tasks found for this project.</p>
