@@ -45,10 +45,11 @@ def submit():
 
     # Prepare team member names for the response
     team_member_names = ', '.join([student.name for student in project.team_members])
-
+    project_detail_url = url_for('project_detail', id=project.project_id)
+    
     response = f"""
     <tr>
-        <td>{project.name}</td>
+       <td><a href="{project_detail_url}">{project.name}</a></td>
         <td>{lead_student.name}</td>
         <td>{team_member_names}</td>
         <td>
@@ -100,29 +101,29 @@ def delete_project(id):
 #     """
 #     return response
 
-@app.route("/update/<int:id>", methods=["PUT"])
-def update(id):
-  project = Project.query.get(id)
-  project.name = request.form["title"]
-  team_member_names = ', '.join([student.name for student in project.students])
-  db.session.commit()
-  response = f"""
-    <tr>
-    <td>{project.name}</td>
-    <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
-    <td>{team_member_names}</td>
-    <td>
-    <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
-        Edit Title
-    </button>
-    <button hx-delete="/delete/{id}"
-        class="btn btn-primary">
-        Delete
-    </button>
-    </td>
-    </tr>
-    """
-  return response
+# @app.route("/update/<int:id>", methods=["PUT"])
+# def update(id):
+#   project = Project.query.get(id)
+#   project.name = request.form["title"]
+#   team_member_names = ', '.join([student.name for student in project.students])
+#   db.session.commit()
+#   response = f"""
+#     <tr>
+#     <td><a href="{{ url_for('project_detail', id={project.project_id}) }}">{{ project.name }}</a></td>
+#     <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
+#     <td>{team_member_names}</td>
+#     <td>
+#     <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
+#         Edit Title
+#     </button>
+#     <button hx-delete="/delete/{id}"
+#         class="btn btn-primary">
+#         Delete
+#     </button>
+#     </td>
+#     </tr>
+#     """
+#   return response
 
 @app.route("/project/<int:id>", methods=["GET"])
 def project_detail(id):
