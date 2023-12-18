@@ -315,3 +315,33 @@ def delete_link(link_id):
         flash(f'An error occurred while deleting the link: {e}', 'danger')
 
     return "Link deleted successfully!"  # You can return any message or empty response as needed
+
+@app.route("/project/edit_project_overview/<int:project_id>", methods=["GET"])
+def edit_project_overview(project_id):
+    project = Project.query.get_or_404(project_id)
+
+    # Generate HTML for the edit form
+    edit_form_html = f"""
+        <!-- Create your edit form here -->
+        <form action="{url_for('update_project_overview', project_id=project.project_id)}" method="post" hx-swap="outerHTML">
+            <label for="overview">Project Overview:</label>
+            <textarea id="overview" name="overview">{project.overview}</textarea>
+            <button type="submit">Update Overview</button>
+        </form>
+    """
+
+    return edit_form_html
+
+@app.route("/project/update_project_overview/<int:project_id>", methods=["POST"])
+def update_project_overview(project_id):
+    project = Project.query.get_or_404(project_id)
+    try:
+        project.overview = request.form.get("overview")
+        db.session.commit()
+        flash('Project overview updated successfully!', 'success')
+        # Return the updated overview as an HTML snippet
+        return f'<p id="project-overview">{project.overview}</p>'
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred: {e}', 'danger')
+        return '', 500  # HTTP 500 for server error

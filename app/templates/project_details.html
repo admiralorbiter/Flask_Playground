@@ -12,10 +12,30 @@
 <body>
     <h1>Project Details - {{ project.name }}</h1>
 
-    <!-- Display Project Details -->
-    <h2>Project Information</h2>
-    <p><strong>Name:</strong> {{ project.name }}</p>
-    <p><strong>Overview:</strong> {{ project.overview }}</p>
+    <!-- Display Project Overview -->
+    <h2>Project Overview</h2>
+    <div id="overview-container">
+        <p id="project-overview">{{ project.overview }}</p>
+        <button hx-get="{{ url_for('edit_project_overview', project_id=project.project_id) }}"
+            hx-trigger="click"
+            hx-target="#overview-container"
+            hx-swap="outerHTML"
+            class="edit-overview-button">
+            Edit Overview
+        </button>
+    </div>
+
+    <!-- Edit Project Overview (initially hidden) -->
+    <div id="edit-overview-form" style="display: none;">
+        <form hx-post="{{ url_for('update_project_overview', project_id=project.project_id) }}"
+                hx-trigger="submit"
+                hx-target="#overview-container"
+                hx-swap="outerHTML">
+            <label for="overview">Project Overview:</label>
+            <textarea id="overview" name="overview">{{ project.overview }}</textarea>
+            <button type="submit">Update Overview</button>
+        </form>
+    </div>
     <p><strong>Comments:</strong> {{ project.comments }}</p>
     <p><strong>Feedback:</strong> {{ project.feedback }}</p>
     <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
