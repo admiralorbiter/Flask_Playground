@@ -322,12 +322,17 @@ def edit_project_overview(project_id):
 
     # Generate HTML for the edit form
     edit_form_html = f"""
-        <!-- Create your edit form here -->
-        <form action="{url_for('update_project_overview', project_id=project.project_id)}" method="post" hx-swap="outerHTML">
+    <div id="overview-container">
+        <form hx-post="{url_for('update_project_overview', project_id=project.project_id)}"
+              hx-trigger="submit"
+              hx-target="#overview-container"
+              hx-swap="outerHTML">
             <label for="overview">Project Overview:</label>
             <textarea id="overview" name="overview">{project.overview}</textarea>
             <button type="submit">Update Overview</button>
         </form>
+        <!-- You can add a cancel button or other elements if needed -->
+    </div>
     """
 
     return edit_form_html
