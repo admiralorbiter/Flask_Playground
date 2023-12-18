@@ -1,3 +1,4 @@
+
 from app import db
 from sqlalchemy.orm import backref
 
@@ -26,37 +27,48 @@ class Student(db.Model):
     # Relationship for projects where student is the lead
     lead_for_projects = db.relationship('Project', backref=backref('project_lead', lazy=True, uselist=False, overlaps="team_members,participating_students"))
 
+class Link(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String, nullable=False)
+
+    # ForeignKey references
+    project_id = db.Column(db.Integer, db.ForeignKey('project.project_id'), nullable=True)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.task_id'), nullable=True)
+
+    # Relationships
+    project = db.relationship('Project', back_populates='links')
+    task = db.relationship('Task', back_populates='links')
+
 class Project(db.Model):
     project_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     overview = db.Column(db.Text)
-    tasks = db.Column(db.Text)  # Assuming tasks are a text field; consider a relationship if more complexity is needed
-    links = db.Column(db.Text)  # For storing multiple links, consider JSON encoding or a separate model
     comments = db.Column(db.Text)
     feedback = db.Column(db.Text)
     due_date = db.Column(db.DateTime)
-    priority = db.Column(db.Integer)  # Could be an enum or a separate model for predefined priorities
-    progress = db.Column(db.Integer)  # Progress as an integer percentage (0-100)
+    priority = db.Column(db.Integer)
+    progress = db.Column(db.Integer)
     short_description = db.Column(db.String)
 
     # Foreign key for the lead student
     lead_student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'))
-    # The backref here is 'project_lead' as defined in the Student model
 
-    # Existing relationship with students
+    # Relationship with students
     students = db.relationship('Student', secondary=project_students, 
                                backref=backref('member_of_projects', lazy='dynamic', overlaps="team_members,participating_students"))
     
-    # One-to-many relationship: one project can have many tasks
+    # Relationship with tasks
     tasks = db.relationship('Task', backref='project', lazy=True)
+
+    # Relationship with links
+    links = db.relationship('Link', back_populates='project', cascade="all, delete-orphan")
 
 class Task(db.Model):
     task_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text)
-    links = db.Column(db.Text)  # Consider JSON encoding or separate model for multiple links
-    progress = db.Column(db.Integer)  # Progress as an integer percentage (0-100)
-    priority = db.Column(db.String)  # Could be an enum or a separate model
+    progress = db.Column(db.Integer)
+    priority = db.Column(db.String)
     due_date = db.Column(db.DateTime)
     feedback = db.Column(db.Text)
     comments = db.Column(db.Text)
@@ -67,3 +79,6 @@ class Task(db.Model):
     # Relationship with students
     assigned_students = db.relationship('Student', secondary=task_students, 
                                         backref=backref('assigned_tasks', lazy='dynamic'))
+
+    # Relationship with links
+    links = db.relationship('Link', back_populates='task', cascade="all, delete-orphan")

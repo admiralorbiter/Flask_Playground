@@ -1,8 +1,7 @@
 from app import app, db
 from flask import render_template, request, jsonify, redirect, url_for, flash
-from app.models import Student, Project, Task
+from app.models import Student, Project, Task, Link
 from datetime import datetime
-
 
 @app.route("/", methods=["GET"])
 def home():
@@ -151,7 +150,7 @@ def update_project(id):
         # Update project's attributes based on form data
         project.name = request.form.get('name')
         project.overview = request.form.get('overview')
-        project.links = request.form.get('links')
+        project.project_links = request.form.get('links')
         project.comments = request.form.get('comments')
         project.feedback = request.form.get('feedback')
         project.due_date = datetime.strptime(request.form.get('due_date'), '%Y-%m-%d') if request.form.get('due_date') else None
@@ -215,3 +214,79 @@ def update_task(task_id):
         flash(f'An error occurred while updating the task: {e}', 'danger')
 
     return redirect(url_for('project_detail', id=task.project_id))
+
+@app.route("/add_link", methods=["POST"])
+def add_link():
+    try:
+        new_link = Link(
+            url=request.form.get("url"),
+            project_id=request.form.get("project_id", type=int),
+            task_id=request.form.get("task_id", type=int)
+        )
+
+        db.session.add(new_link)
+        db.session.commit()
+        flash('Link added successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while adding the link: {e}', 'danger')
+
+    return redirect(request.referrer or url_for('home'))
+
+@app.route("/cancel_edit_link/<int:link_id>", methods=["GET"])
+def cancel_edit_link(link_id):
+    link = Link.query.get_or_404(link_id)
+    return f'''
+    <li hx-swap="outerHTML" id="link-{link.id}">
+        <a href="{link.url}" target="_blank">{link.url}</a>
+        <button hx-get="{url_for('edit_link', link_id=link.id)}" class="btn btn-sm btn-secondary">Edit</button>
+        <button hx-post="{url_for('delete_link', link_id=link.id)}" hx-confirm="Are you sure you want to delete this link?" hx-target="closest li" hx-swap="outerHTML" class="btn btn-sm btn-danger">Delete</button>
+    </li>
+    '''
+
+@app.route("/edit_link/<int:link_id>", methods=["GET"])
+def edit_link(link_id):
+    link = Link.query.get_or_404(link_id)
+
+    response = f"""
+    <form hx-post="{url_for('update_link', link_id=link.id)}" hx-swap="outerHTML" id="link-{link.id}">
+        <input type="hidden" name="project_id" value="{link.project_id}">
+        <input type="text" name="url" value="{link.url}" placeholder="Edit URL">
+        <button type="button" hx-get="{url_for('cancel_edit_link', link_id=link.id)}" hx-target="#link-{link.id}" hx-swap="outerHTML">Cancel</button>
+        <button type="submit">Save</button>
+    </form>
+    """
+    return response
+
+@app.route("/update_link/<int:link_id>", methods=["POST"])
+def update_link(link_id):
+    link = Link.query.get_or_404(link_id)
+    
+    try:
+        new_url = request.form.get("url")
+        # Add form validation here if necessary
+
+        link.url = new_url
+        db.session.commit()
+        flash('Link updated successfully!', 'success')
+
+        # Return an HTML snippet or JSON for HTMX to update the UI
+        updated_link_html = f"<div>Link Updated: {link.url}</div>"
+        return updated_link_html
+    except (Exception) as e:
+        db.session.rollback()
+        flash(f'An error occurred while updating the link: {e}', 'danger')
+        return f"<div>Error: {e}</div>", 500
+
+@app.route("/delete_link/<int:link_id>", methods=["POST"])
+def delete_link(link_id):
+    link = Link.query.get_or_404(link_id)
+    try:
+        db.session.delete(link)
+        db.session.commit()
+        flash('Link deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while deleting the link: {e}', 'danger')
+
+    return "Link deleted successfully!"  # You can return any message or empty response as needed
