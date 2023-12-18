@@ -60,15 +60,16 @@
         <p>Progress: {{ task.progress }}%</p>
         <!-- Add other task details here -->
 
-        <!-- Link to update task (assuming you have a separate page for this) -->
         <!-- Button to toggle the edit form -->
-        <button hx-get="{{ url_for('update_task', task_id=task.task_id) }}" class="edit-task-button">Edit Task</button>
+        <button hx-get="{{ url_for('update_task', task_id=task.task_id) }}" class="edit-task-button" hx-target="#edit-form-container">Edit Task</button>
 
         <!-- Button to delete the task -->
         <button hx-post="{{ url_for('delete_task', task_id=task.task_id) }}" class="delete-task-button" hx-confirm="Are you sure you want to delete this task?"
         hx-target="closest div" hx-swap="outerHTML">Delete Task</button>
-    
+        
     </div>
+    <!-- Edit form container for the task -->
+    <div id="edit-form-container"></div>
     {% else %}
     <p>No tasks found for this project.</p>
     {% endfor %}

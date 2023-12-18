@@ -142,6 +142,7 @@ def update_task(task_id):
             </form>
         """
         return edit_form_html
+
     elif request.method == "POST":
         try:
             task.name = request.form.get("task_name")
