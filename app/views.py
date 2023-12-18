@@ -156,6 +156,19 @@ def update_task(task_id):
         # After updating the task, you can return a response, such as a redirect
         return redirect(url_for('project_detail', id=task.project_id))
 
+@app.route("/task/delete/<int:task_id>", methods=["POST"])
+def delete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+
+    try:
+        db.session.delete(task)
+        db.session.commit()
+        flash('Task deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while deleting the task: {e}', 'danger')
+
+    return ""
 
 @app.route("/project/<int:id>", methods=["GET"])
 def project_detail(id):
