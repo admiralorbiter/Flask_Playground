@@ -1,7 +1,9 @@
 from app import app, db
 from flask import render_template, request, jsonify, redirect, url_for, flash
-from app.models import Student, Project, Task, Link
+from app.models import Student, Project, Task, Link, project_students
 from datetime import datetime
+
+from sqlalchemy import select, delete
 
 @app.route("/", methods=["GET"])
 def home():
@@ -50,12 +52,8 @@ def submit():
         <td>{lead_student.name}</td>
         <td>{team_member_names}</td>
         <td>
-            <button class="btn btn-primary"
-                hx-get="/get-edit-form/{project.project_id}">
-                Edit Title
-            </button>
             <button hx-delete="/delete/{project.project_id}"
-                class="btn btn-primary">
+                class="btn btn-danger">
                 Delete
             </button>
         </td>
@@ -65,51 +63,42 @@ def submit():
 
 @app.route("/delete/<int:id>", methods=["DELETE"])
 def delete_project(id):
-    project = Project.query.get(id)
-    db.session.delete(project)
-    db.session.commit()
+    project = Project.query.get_or_404(id)
+
+    try:
+        # Manually delete related rows in project_students
+        db.session.execute(delete(project_students).where(project_students.c.project_id == id))
+        
+        db.session.delete(project)
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while deleting the project: {e}', 'danger')
+
     return ""
 
-@app.route("/get-edit-form/<int:id>", methods=["GET"])
-def get_edit_form(id):
-  project = Project.query.get(id)
-  
-  response = f"""
-    <tr hx-trigger='cancel' class='editing' hx-get="/get-project-row/{id}">
-    <td><input name="title" value="{project.name}"/></td>
-    <td>
-    <button class="btn btn-primary" hx-get="/get-project-row/{id}">
-        Cancel
-    </button>
-    <button class="btn btn-primary" hx-put="/update/{id}" hx-include="closest tr">
-        Save
-    </button>
-    </td>
-    </tr>
-    """
-  return response
-
-@app.route("/get-project-row/<int:id>", methods=["GET"])
-def get_project_row(id):
-    project = Project.query.get(id)
-    team_member_names = ', '.join([student.name for student in project.students])
-    response = f"""
-    <tr>
-        <td>{project.name}</td>
-        <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
-        <td>{team_member_names}</td>
-        <td>
-            <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
-                Edit Title
-            </button>
-             <button hx-delete="/delete/{project.project_id}"
-                class="btn btn-primary">
-                Delete
-            </button>
-        </td>
-    </tr>
-    """
-    return response
+# @app.route("/get-project-row/<int:id>", methods=["GET"])
+# def get_project_row(id):
+#     project = Project.query.get(id)
+#     team_member_names = ', '.join([student.name for student in project.students])
+#     response = f"""
+#     <tr>
+#         <td>{project.name}</td>
+#         <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
+#         <td>{team_member_names}</td>
+#         <td>
+#             <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
+#                 Edit Title
+#             </button>
+#              <button hx-delete="/delete/{project.project_id}"
+#                 class="btn btn-primary">
+#                 Delete
+#             </button>
+#         </td>
+#     </tr>
+#     """
+#     return response
 
 @app.route("/update/<int:id>", methods=["PUT"])
 def update(id):

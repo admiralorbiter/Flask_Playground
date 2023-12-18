@@ -3,8 +3,8 @@ from app import db
 from sqlalchemy.orm import backref
 
 project_students = db.Table('project_students',
-    db.Column('project_id', db.Integer, db.ForeignKey('project.project_id')),
-    db.Column('student_id', db.Integer, db.ForeignKey('student.student_id'))
+    db.Column('project_id', db.Integer, db.ForeignKey('project.project_id', ondelete="CASCADE")),
+    db.Column('student_id', db.Integer, db.ForeignKey('student.student_id', ondelete="CASCADE"))
 )
 
 task_students = db.Table('task_students',
@@ -55,7 +55,8 @@ class Project(db.Model):
 
     # Relationship with students
     students = db.relationship('Student', secondary=project_students, 
-                               backref=backref('member_of_projects', lazy='dynamic', overlaps="team_members,participating_students"))
+                           backref=backref('member_of_projects', lazy='dynamic', overlaps="team_members,participating_students"))
+
     
     # Relationship with tasks
     tasks = db.relationship('Task', backref='project', lazy=True)
