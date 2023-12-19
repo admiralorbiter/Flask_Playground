@@ -36,12 +36,30 @@
             <button type="submit">Update Overview</button>
         </form>
     </div>
-    <p><strong>Comments:</strong> {{ project.comments }}</p>
     <p><strong>Feedback:</strong> {{ project.feedback }}</p>
     <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
     <p><strong>Priority:</strong> {{ project.priority }}</p>
     <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
     <p><strong>Short Description:</strong> {{ project.short_description }}</p>
+
+    <!-- Add Comment Form -->
+    <form method="post" hx-post="{{ url_for('add_comment', project_id=project.project_id) }}" hx-target="#comments-section">
+        <textarea name="comment_text"></textarea>
+        <button type="submit">Add Comment</button>
+    </form>
+
+    <!-- Comments Section -->
+    <div id="comments-section">
+        {% for comment in project.comments %}
+            <div id="comment-{{ comment.comment_id }}">
+                <p>{{ comment.text }}</p>
+                <!-- Edit Button -->
+                <button hx-get="{{ url_for('edit_comment_form', comment_id=comment.comment_id) }}" hx-target="#comment-{{ comment.comment_id }}">Edit</button>
+                <!-- Delete Button -->
+                <button hx-post="{{ url_for('delete_comment', comment_id=comment.comment_id) }}" hx-target="closest div">Delete</button>
+            </div>
+        {% endfor %}
+    </div>
 
     <p><strong>Lead Student:</strong> {{ project.project_lead.name if project.project_lead else "None" }}</p>
     <h3>Team Members</h3>
@@ -56,11 +74,19 @@
         <li id="link-{{ link.id }}">
             <a href="{{ link.url|default('http://' + link.url) }}" target="_blank">{{ link.url }}</a>
             
-            <!-- Edit Link Button -->
-            <button hx-get="{{ url_for('edit_link', link_id=link.id) }}" hx-target="#link-{{ link.id }}" hx-swap="outerHTML" class="btn btn-sm btn-secondary">Edit</button>
-            
-            <!-- Delete Link Button -->
-            <button hx-post="{{ url_for('delete_link', link_id=link.id) }}" hx-confirm="Are you sure you want to delete this link?" hx-target="closest li" hx-swap="outerHTML" class="btn btn-sm btn-danger">Delete</button>
+          <!-- Edit Comment Button -->
+          <button hx-get="{{ url_for('edit_comment_form', comment_id=comment.comment_id) }}"
+            hx-target="#comment-{{ comment.comment_id }}"
+            hx-swap="outerHTML"
+            class="btn btn-sm btn-secondary">Edit</button>
+
+          <!-- Delete Comment Button -->
+          <button hx-post="{{ url_for('delete_comment', comment_id=comment.comment_id) }}"
+            hx-confirm="Are you sure you want to delete this comment?"
+            hx-target="closest div"
+            hx-swap="outerHTML"
+            class="btn btn-sm btn-danger">Delete</button>
+
         </li>
         {% endfor %}
     </ul>

@@ -12,6 +12,16 @@ task_students = db.Table('task_students',
     db.Column('student_id', db.Integer, db.ForeignKey('student.student_id'))
 )
 
+class Comment(db.Model):
+    comment_id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+
+    # ForeignKey references
+    project_id = db.Column(db.Integer, db.ForeignKey('project.project_id'), nullable=True)
+
+    # Relationships
+    project = db.relationship('Project', backref='comments')
+
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -43,7 +53,6 @@ class Project(db.Model):
     project_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     overview = db.Column(db.Text)
-    comments = db.Column(db.Text)
     feedback = db.Column(db.Text)
     due_date = db.Column(db.DateTime)
     priority = db.Column(db.Integer)

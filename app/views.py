@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, jsonify, redirect, url_for, flash
-from app.models import Student, Project, Task, Link, project_students
+from app.models import Student, Project, Task, Link, project_students, Comment
 from datetime import datetime
 
 from sqlalchemy import select, delete
@@ -350,3 +350,61 @@ def update_project_overview(project_id):
         db.session.rollback()
         flash(f'An error occurred: {e}', 'danger')
         return '', 500  # HTTP 500 for server error
+    
+
+@app.route('/add-comment/<int:project_id>', methods=['POST'])
+def add_comment(project_id):
+    new_comment_text = request.form.get('comment_text')
+    new_comment = Comment(text=new_comment_text, project_id=project_id)
+    db.session.add(new_comment)
+    db.session.commit()
+
+    # Fetch the updated list of comments
+    project = Project.query.get_or_404(project_id)
+    comments_html = ""
+    for comment in project.comments:
+        comments_html += f"""
+            <div id="comment-{comment.comment_id}">
+                <p>{comment.text}</p>
+                <button hx-get="{ url_for('edit_comment_form', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}">Edit</button>
+                <button hx-delete="{ url_for('delete_comment', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}">Delete</button>
+            </div>
+        """
+    return comments_html
+
+@app.route('/edit-comment-form/<int:comment_id>')
+def edit_comment_form(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    edit_form_html = f"""
+        <form method='POST' hx-post='{url_for("update_comment", comment_id=comment.comment_id)}' hx-target='#comment-{comment.comment_id}'>
+            <textarea name='comment_text'>{comment.text}</textarea>
+            <button type='submit'>Update Comment</button>
+        </form>
+    """
+    return edit_form_html
+
+@app.route('/update-comment/<int:comment_id>', methods=['POST'])
+def update_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    comment.text = request.form.get('comment_text')
+    db.session.commit()
+
+    updated_comment_html = f"""
+        <div id="comment-{comment.comment_id}">
+            <p>{comment.text}</p>
+            <button hx-get='{url_for('edit_comment_form', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}">Edit</button>
+            <button hx-post='{url_for('delete_comment', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}">Delete</button>
+        </div>
+    """
+    return updated_comment_html
+
+@app.route('/delete-comment/<int:comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    project_id = comment.project_id
+    db.session.delete(comment)
+    db.session.commit()
+
+    project = Project.query.get_or_404(project_id)
+    comments_html = ""
+    return comments_html
