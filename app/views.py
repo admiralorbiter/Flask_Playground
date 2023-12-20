@@ -387,15 +387,21 @@ def add_comment(project_id):
     db.session.add(new_comment)
     db.session.commit()
 
-    # Fetch the updated list of comments
-    project = Project.query.get_or_404(project_id)
-    comments_html = ""
-    for comment in project.comments:
-        comments_html += f"""
-            <div id="comment-{comment.comment_id}">
-                <p>{comment.text}</p>
-                <button hx-get="{ url_for('edit_comment_form', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}" class="btn btn-primary">Edit</button>
-                <button hx-post="{ url_for('delete_comment', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}" class="btn btn-danger">Delete</button>
+    comments_html = f"""
+            <div id="comment-{new_comment.comment_id}" class="col-2">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">{new_comment.text}</p>
+                        <!-- Edit Button -->
+                        <button hx-get="{ url_for('edit_comment_form', comment_id=new_comment.comment_id) }" 
+                                hx-target="#comment-{new_comment.comment_id}" 
+                                class="btn btn-primary btn-sm">Edit</button>
+                        <!-- Delete Button -->
+                        <button hx-post="{ url_for('delete_comment', comment_id=new_comment.comment_id) }" 
+                                hx-target="#comment-{new_comment.comment_id}" 
+                                class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                </div>
             </div>
         """
     return comments_html
@@ -437,15 +443,3 @@ def delete_comment(comment_id):
     comments_html = ""
     return comments_html
 
-@app.route("/get_comment_form")
-def get_comment_form():
-    project_id = request.args.get('project_id')
-    if not project_id:
-        # Handle the case where project_id is not provided
-        return "Project ID is required", 400
-    return f"""  
-        <form method="post" hx-post='{ url_for('add_comment', project_id=project_id) }' hx-target="#comment-form-container">
-            <textarea name="comment_text"></textarea>
-            <button type="submit" class="btn btn-primary">Add Comment</button>
-        </form>
-    """
