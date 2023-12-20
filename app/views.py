@@ -1,9 +1,39 @@
 from app import app, db
-from flask import render_template, request, jsonify, redirect, url_for, flash
-from app.models import Student, Project, Task, Link, project_students, Comment
+from flask import render_template, request, redirect, url_for, flash
+from app.models import Student, Project, Task, Link, project_students, Comment, User
 from datetime import datetime
+from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.urls import url_parse
 
 from sqlalchemy import select, delete
+
+@app.route("/", methods=["GET"])
+def index():
+    projects = Project.query.all()
+    return render_template("index.html", projects=projects)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user is None or not user.check_password(password):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('home')
+        return redirect(next_page)
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 @app.route("/", methods=["GET"])
 def home():

@@ -1,6 +1,7 @@
 
 from app import db
 from sqlalchemy.orm import backref
+from werkzeug.security import generate_password_hash, check_password_hash
 
 project_students = db.Table('project_students',
     db.Column('project_id', db.Integer, db.ForeignKey('project.project_id', ondelete="CASCADE")),
@@ -11,6 +12,17 @@ task_students = db.Table('task_students',
     db.Column('task_id', db.Integer, db.ForeignKey('task.task_id')),
     db.Column('student_id', db.Integer, db.ForeignKey('student.student_id'))
 )
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True)
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class Comment(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True)

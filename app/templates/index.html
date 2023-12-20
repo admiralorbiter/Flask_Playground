@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Project Manager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.5.0"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Project Manager{% endblock %}
+
+{% block content %}
     <h1>Project Manager</h1>
     <form hx-post="/submit" hx-swap="beforeend" hx-target="#new-project" class="mb-3">
         <input type="text" placeholder="Project" name="title" class="form-control mb-3" />
@@ -26,35 +19,33 @@
               <th scope="col">Team</th>
               <th scope="col">Actions</th>
             </tr>
-          </thead>
-          <tbody id="new-project" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
+        </thead>
+        <tbody id="new-project" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
             {% for project in projects %}
             <tr>
-              <td><a href="{{ url_for('project_detail', id=project.project_id) }}">{{ project.name }}</a></td>
-              <td>
-                {{ project.students[0].name if project.students else 'No lead' }}
-              </td>
-              <td>
-                {% for student in project.students[1:] %}
-                  {{ student.name }}{% if not loop.last %}, {% endif %}
-                {% else %}
-                  No team members
-                {% endfor %}
-              </td>
-              <td>
-                <!-- Your buttons for Edit and Delete -->
-                <!-- Delete Button -->
-                <button class="btn btn-danger"
-                      hx-delete="/delete/{{ project.project_id }}"
-                      hx-target="closest tr"
-                      hx-swap="outerHTML">
-                  Delete
-              </button>
-              </td>
+                <td><a href="{{ url_for('project_detail', id=project.project_id) }}">{{ project.name }}</a></td>
+                <td>
+                    {{ project.students[0].name if project.students else 'No lead' }}
+                </td>
+                <td>
+                    {% for student in project.students[1:] %}
+                        {{ student.name }}{% if not loop.last %}, {% endif %}
+                    {% else %}
+                        No team members
+                    {% endfor %}
+                </td>
+                <td>
+                    <!-- Your buttons for Edit and Delete -->
+                    <!-- Delete Button -->
+                    <button class="btn btn-danger"
+                          hx-delete="/delete/{{ project.project_id }}"
+                          hx-target="closest tr"
+                          hx-swap="outerHTML">
+                      Delete
+                    </button>
+                </td>
             </tr>
             {% endfor %}
-          </tbody>
+        </tbody>
     </table>
-</body>
-
-</html>
+{% endblock %}
