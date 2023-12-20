@@ -61,6 +61,7 @@ def home():
   return render_template("index.html", projects=projects)
 
 @app.route("/submit", methods=["POST"])
+@login_required
 def submit():
     name = request.form["title"]
     lead_name = request.form["lead"]
@@ -130,53 +131,8 @@ def delete_project(id):
 
     return ""
 
-# @app.route("/get-project-row/<int:id>", methods=["GET"])
-# def get_project_row(id):
-#     project = Project.query.get(id)
-#     team_member_names = ', '.join([student.name for student in project.students])
-#     response = f"""
-#     <tr>
-#         <td>{project.name}</td>
-#         <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
-#         <td>{team_member_names}</td>
-#         <td>
-#             <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
-#                 Edit Title
-#             </button>
-#              <button hx-delete="/delete/{project.project_id}"
-#                 class="btn btn-primary">
-#                 Delete
-#             </button>
-#         </td>
-#     </tr>
-#     """
-#     return response
-
-# @app.route("/update/<int:id>", methods=["PUT"])
-# def update(id):
-#   project = Project.query.get(id)
-#   project.name = request.form["title"]
-#   team_member_names = ', '.join([student.name for student in project.students])
-#   db.session.commit()
-#   response = f"""
-#     <tr>
-#     <td><a href="{{ url_for('project_detail', id={project.project_id}) }}">{{ project.name }}</a></td>
-#     <td>{project.project_lead.name if project.project_lead else 'No lead'}</td>
-#     <td>{team_member_names}</td>
-#     <td>
-#     <button class="btn btn-primary" hx-get="/get-edit-form/{id}">
-#         Edit Title
-#     </button>
-#     <button hx-delete="/delete/{id}"
-#         class="btn btn-primary">
-#         Delete
-#     </button>
-#     </td>
-#     </tr>
-#     """
-#   return response
-
 @app.route("/task/update/<int:task_id>", methods=["GET", "POST"])
+@login_required
 def update_task(task_id):
     task = Task.query.get_or_404(task_id)
 
@@ -209,6 +165,7 @@ def update_task(task_id):
         return redirect(url_for('project_detail', id=task.project_id))
 
 @app.route("/task/delete/<int:task_id>", methods=["POST"])
+@login_required
 def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
 
@@ -230,6 +187,7 @@ def project_detail(id):
 
 
 @app.route("/project/update/<int:id>", methods=["POST"])
+@login_required
 def update_project(id):
     project = Project.query.get_or_404(id)
 
@@ -271,6 +229,7 @@ def update_project(id):
     return redirect(url_for('project_detail', id=id))
 
 @app.route("/project/<int:project_id>/add_task", methods=["POST"])
+@login_required
 def add_task(project_id):
     project = Project.query.get_or_404(project_id)
     try:
@@ -292,6 +251,7 @@ def add_task(project_id):
     return redirect(url_for('project_detail', id=project_id))
 
 @app.route("/add_link", methods=["POST"])
+@login_required
 def add_link():
     try:
         new_link = Link(
@@ -310,6 +270,7 @@ def add_link():
     return redirect(request.referrer or url_for('home'))
 
 @app.route("/cancel_edit_link/<int:link_id>", methods=["GET"])
+@login_required
 def cancel_edit_link(link_id):
     link = Link.query.get_or_404(link_id)
     return f'''
@@ -321,6 +282,7 @@ def cancel_edit_link(link_id):
     '''
 
 @app.route("/edit_link/<int:link_id>", methods=["GET"])
+@login_required
 def edit_link(link_id):
     link = Link.query.get_or_404(link_id)
 
@@ -335,6 +297,7 @@ def edit_link(link_id):
     return response
 
 @app.route("/update_link/<int:link_id>", methods=["POST"])
+@login_required
 def update_link(link_id):
     link = Link.query.get_or_404(link_id)
     
@@ -371,6 +334,7 @@ def update_link(link_id):
         return f"<div>Error: {e}</div>", 500
 
 @app.route("/delete_link/<int:link_id>", methods=["POST"])
+@login_required
 def delete_link(link_id):
     link = Link.query.get_or_404(link_id)
     try:
@@ -384,6 +348,7 @@ def delete_link(link_id):
     return "Link deleted successfully!"  # You can return any message or empty response as needed
 
 @app.route("/project/edit_project_overview/<int:project_id>", methods=["GET"])
+@login_required
 def edit_project_overview(project_id):
     project = Project.query.get_or_404(project_id)
 
@@ -405,6 +370,7 @@ def edit_project_overview(project_id):
     return edit_form_html
 
 @app.route("/project/update_project_overview/<int:project_id>", methods=["POST"])
+@login_required
 def update_project_overview(project_id):
     project = Project.query.get_or_404(project_id)
     try:
@@ -432,6 +398,7 @@ def update_project_overview(project_id):
     
 
 @app.route('/add-comment/<int:project_id>', methods=['POST'])
+@login_required
 def add_comment(project_id):
     new_comment_text = request.form.get('comment_text')
     new_comment = Comment(text=new_comment_text, project_id=project_id)
@@ -458,6 +425,7 @@ def add_comment(project_id):
     return comments_html
 
 @app.route('/edit-comment-form/<int:comment_id>')
+@login_required
 def edit_comment_form(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     edit_form_html = f"""
@@ -469,6 +437,7 @@ def edit_comment_form(comment_id):
     return edit_form_html
 
 @app.route('/update-comment/<int:comment_id>', methods=['POST'])
+@login_required
 def update_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     comment.text = request.form.get('comment_text')
@@ -484,6 +453,7 @@ def update_comment(comment_id):
     return updated_comment_html
 
 @app.route('/delete-comment/<int:comment_id>', methods=['POST'])
+@login_required
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     project_id = comment.project_id

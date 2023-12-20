@@ -4,13 +4,14 @@
 
 {% block content %}
     <h1>Project Manager</h1>
+    {% if current_user.is_authenticated %}
     <form hx-post="/submit" hx-swap="beforeend" hx-target="#new-project" class="mb-3">
         <input type="text" placeholder="Project" name="title" class="form-control mb-3" />
         <input type="text" placeholder="Student Lead" name="lead" class="form-control mb-3" />
         <input type="text" placeholder="Team Members (comma separated)" name="team" class="form-control mb-3" />
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
-
+    {% endif %}
     <table class="table">
         <thead>
             <tr>
