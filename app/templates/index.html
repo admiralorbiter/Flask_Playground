@@ -35,14 +35,12 @@
                     {% endfor %}
                 </td>
                 <td>
-                    <!-- Your buttons for Edit and Delete -->
-                    <!-- Delete Button -->
-                    <button class="btn btn-danger"
-                          hx-delete="/delete/{{ project.project_id }}"
-                          hx-target="closest tr"
-                          hx-swap="outerHTML">
-                      Delete
-                    </button>
+                    {% if current_user.is_authenticated %}
+                        <!-- Display delete button -->
+                        <button class="btn btn-danger" hx-delete="/delete/{{ project.project_id }}" hx-target="closest tr" hx-swap="outerHTML">
+                            Delete
+                        </button>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

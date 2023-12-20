@@ -6,6 +6,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
 from sqlalchemy import select, delete
+from flask_login import login_required
 
 @app.route("/", methods=["GET"])
 def index():
@@ -29,6 +30,25 @@ def login():
             next_page = url_for('home')
         return redirect(next_page)
     return render_template('login.html')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        # Add more form validations as necessary
+
+        # Create new user and set password
+        user = User(username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        # Redirect to login page after successful signup
+        return redirect(url_for('login'))
+
+    return render_template('signup.html')
 
 @app.route('/logout')
 def logout():
@@ -93,6 +113,7 @@ def submit():
     return response
 
 @app.route("/delete/<int:id>", methods=["DELETE"])
+@login_required
 def delete_project(id):
     project = Project.query.get_or_404(id)
 
