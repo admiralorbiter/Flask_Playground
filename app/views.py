@@ -395,7 +395,7 @@ def add_comment(project_id):
             <div id="comment-{comment.comment_id}">
                 <p>{comment.text}</p>
                 <button hx-get="{ url_for('edit_comment_form', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}" class="btn btn-primary">Edit</button>
-                <button hx-delete="{ url_for('delete_comment', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}" class="btn btn-danger">Delete</button>
+                <button hx-post="{ url_for('delete_comment', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}" class="btn btn-danger">Delete</button>
             </div>
         """
     return comments_html
@@ -436,3 +436,16 @@ def delete_comment(comment_id):
     project = Project.query.get_or_404(project_id)
     comments_html = ""
     return comments_html
+
+@app.route("/get_comment_form")
+def get_comment_form():
+    project_id = request.args.get('project_id')
+    if not project_id:
+        # Handle the case where project_id is not provided
+        return "Project ID is required", 400
+    return f"""  
+        <form method="post" hx-post='{ url_for('add_comment', project_id=project_id) }' hx-target="#comment-form-container">
+            <textarea name="comment_text"></textarea>
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+    """

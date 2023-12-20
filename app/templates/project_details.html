@@ -56,11 +56,11 @@
         </div>
     </div>
 
-    <!-- Add Comment Form -->
-    <form method="post" hx-post="{{ url_for('add_comment', project_id=project.project_id) }}" hx-target="#comments-section">
-        <textarea name="comment_text"></textarea>
-        <button type="submit" class="btn btn-primary">Add Comment</button>
-    </form>
+    <!-- Button to Load Add Comment Form -->
+    <button hx-get="{{ url_for('get_comment_form', project_id=project.project_id) }}" hx-target="#comment-form-container" class="btn btn-secondary">Add Comment</button>
+
+    <!-- Container where the form will be loaded -->
+    <div id="comment-form-container"></div>
 
     <!-- Comments Section -->
     <div id="comments-section">
