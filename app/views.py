@@ -8,6 +8,18 @@ from werkzeug.urls import url_parse
 from sqlalchemy import select, delete
 from flask_login import login_required
 
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    print(current_user.role.name)
+    print(current_user.role)
+    if not current_user.role or current_user.role.name != 'admin':
+        # Redirect non-admin users or show an error message
+        return redirect(url_for('index'))
+
+    users = User.query.all()
+    return render_template('admin_dashboard.html', users=users)
+
 @app.route("/", methods=["GET"])
 def index():
     projects = Project.query.all()
