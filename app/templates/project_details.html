@@ -12,7 +12,22 @@
 <body>
     <h1>{{ project.name }}</h1>
     <div class="row">
-        <div class="col"
+        <div class="col-2">
+            <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
+            <p><strong>Priority:</strong> {{ project.priority }}</p>
+            <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
+            <p><strong>Short Description:</strong> {{ project.short_description }}</p>
+        </div>
+        <div class="col-2">
+            <h3>Team Members</h3>
+            <p><strong>Lead Student:</strong> {{ project.project_lead.name if project.project_lead else "None" }}</p>
+            <ul>
+                {% for student in project.students %}
+                    <li>{{ student.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col">
             <!-- Display Project Overview -->
             <h2>Project Overview</h2>
             <div id="overview-container" style="position: relative; min-height: 150px;">
@@ -21,7 +36,7 @@
                         hx-trigger="click"
                         hx-target="#overview-container"
                         hx-swap="outerHTML"
-                        class="edit-overview-button btn btn-primary"
+                        class="edit-overview-button btn-sm btn-primary"
                         style="position: absolute; bottom: 10px; right: 10px;">
                     Edit Overview
                 </button>
@@ -38,12 +53,6 @@
                     <button type="submit">Update Overview</button>
                 </form>
             </div>
-        </div>
-        <div class="col">
-            <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
-            <p><strong>Priority:</strong> {{ project.priority }}</p>
-            <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
-            <p><strong>Short Description:</strong> {{ project.short_description }}</p>
         </div>
     </div>
 
@@ -65,14 +74,6 @@
             </div>
         {% endfor %}
     </div>
-
-    <p><strong>Lead Student:</strong> {{ project.project_lead.name if project.project_lead else "None" }}</p>
-    <h3>Team Members</h3>
-    <ul>
-        {% for student in project.students %}
-            <li>{{ student.name }}</li>
-        {% endfor %}
-    </ul>
     <h3>Links</h3>
     <ul>
         {% for link in project.links %}
