@@ -345,7 +345,19 @@ def update_project_overview(project_id):
         db.session.commit()
         flash('Project overview updated successfully!', 'success')
         # Return the updated overview as an HTML snippet
-        return f'<p id="project-overview">{project.overview}</p>'
+        return f"""
+        <div id="overview-container" style="position: relative; min-height: 150px;">
+        <p id="project-overview">{ project.overview }</p>
+        <button hx-get="{ url_for('edit_project_overview', project_id=project.project_id) }"
+                hx-trigger="click"
+                hx-target="#overview-container"
+                hx-swap="outerHTML"
+                class="edit-overview-button btn btn-primary"
+                style="position: absolute; bottom: 10px; right: 10px;">
+            Edit Overview
+        </button>
+        </div>
+    """
     except Exception as e:
         db.session.rollback()
         flash(f'An error occurred: {e}', 'danger')
