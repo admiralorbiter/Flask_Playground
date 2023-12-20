@@ -138,7 +138,7 @@ def update_task(task_id):
                 <input type="text" name="task_name" value="{task.name}">
                 <textarea name="task_description">{task.description}</textarea>
                 <!-- Add other form fields as necessary -->
-                <button type="submit">Update Task</button>
+                <button type="submit" class="btn btn-primary">Update Task</button>
             </form>
         """
         return edit_form_html
@@ -264,7 +264,7 @@ def cancel_edit_link(link_id):
     return f'''
     <li hx-swap="outerHTML" id="link-{link.id}">
         <a href="{link.url}" target="_blank">{link.url}</a>
-        <button hx-get="{url_for('edit_link', link_id=link.id)}" class="btn btn-sm btn-secondary">Edit</button>
+        <button hx-get="{url_for('edit_link', link_id=link.id)}" class="btn btn-sm btn-primary">Edit</button>
         <button hx-post="{url_for('delete_link', link_id=link.id)}" hx-confirm="Are you sure you want to delete this link?" hx-target="closest li" hx-swap="outerHTML" class="btn btn-sm btn-danger">Delete</button>
     </li>
     '''
@@ -277,8 +277,8 @@ def edit_link(link_id):
     <form hx-post="{url_for('update_link', link_id=link.id)}" hx-swap="outerHTML" id="link-{link.id}">
         <input type="hidden" name="project_id" value="{link.project_id}">
         <input type="text" name="url" value="{link.url}" placeholder="Edit URL">
-        <button type="button" hx-get="{url_for('cancel_edit_link', link_id=link.id)}" hx-target="#link-{link.id}" hx-swap="outerHTML">Cancel</button>
-        <button type="submit">Save</button>
+        <button type="button" hx-get="{url_for('cancel_edit_link', link_id=link.id)}" hx-target="#link-{link.id}" hx-swap="outerHTML" class="btn btn-primary">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
     """
     return response
@@ -293,14 +293,30 @@ def update_link(link_id):
 
         link.url = new_url
         db.session.commit()
-        flash('Link updated successfully!', 'success')
 
         # Return an HTML snippet or JSON for HTMX to update the UI
-        updated_link_html = f"<div>Link Updated: {link.url}</div>"
+        updated_link_html = f"""
+                <li id="link-{ link.id }">
+            <a href="{ link.url}" target="_blank">{ link.url }</a>
+            
+        <!-- Edit Link Button -->
+        <button hx-get="{ url_for('edit_link', link_id=link.id) }"
+                hx-target="#link-{ link.id }"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-secondary">Edit</button>
+
+        <!-- Delete Link Button -->
+        <button hx-post="{ url_for('delete_link', link_id=link.id) }"
+                hx-confirm="Are you sure you want to delete this link?"
+                hx-target="closest div"
+                hx-swap="outerHTML"
+                class="btn btn-sm btn-danger">Delete</button>
+
+        </li>
+        """
         return updated_link_html
     except (Exception) as e:
         db.session.rollback()
-        flash(f'An error occurred while updating the link: {e}', 'danger')
         return f"<div>Error: {e}</div>", 500
 
 @app.route("/delete_link/<int:link_id>", methods=["POST"])
@@ -329,7 +345,7 @@ def edit_project_overview(project_id):
               hx-swap="outerHTML">
             <label for="overview">Project Overview:</label>
             <textarea id="overview" name="overview">{project.overview}</textarea>
-            <button type="submit">Update Overview</button>
+            <button type="submit" class="btn btn-primary">Update Overview</button>
         </form>
         <!-- You can add a cancel button or other elements if needed -->
     </div>
@@ -378,8 +394,8 @@ def add_comment(project_id):
         comments_html += f"""
             <div id="comment-{comment.comment_id}">
                 <p>{comment.text}</p>
-                <button hx-get="{ url_for('edit_comment_form', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}">Edit</button>
-                <button hx-delete="{ url_for('delete_comment', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}">Delete</button>
+                <button hx-get="{ url_for('edit_comment_form', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}" class="btn btn-primary">Edit</button>
+                <button hx-delete="{ url_for('delete_comment', comment_id=comment.comment_id) }" hx-target="#comment-{comment.comment_id}" class="btn btn-danger">Delete</button>
             </div>
         """
     return comments_html
@@ -390,7 +406,7 @@ def edit_comment_form(comment_id):
     edit_form_html = f"""
         <form method='POST' hx-post='{url_for("update_comment", comment_id=comment.comment_id)}' hx-target='#comment-{comment.comment_id}'>
             <textarea name='comment_text'>{comment.text}</textarea>
-            <button type='submit'>Update Comment</button>
+            <button type='submit' class="btn btn-primary">Update Comment</button>
         </form>
     """
     return edit_form_html
@@ -404,8 +420,8 @@ def update_comment(comment_id):
     updated_comment_html = f"""
         <div id="comment-{comment.comment_id}">
             <p>{comment.text}</p>
-            <button hx-get='{url_for('edit_comment_form', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}">Edit</button>
-            <button hx-post='{url_for('delete_comment', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}">Delete</button>
+            <button hx-get='{url_for('edit_comment_form', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}" class="btn btn-primary">Edit</button>
+            <button hx-post='{url_for('delete_comment', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}" class="btn btn-danger">Delete</button>
         </div>
     """
     return updated_comment_html
