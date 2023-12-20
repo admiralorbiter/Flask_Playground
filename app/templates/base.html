@@ -20,14 +20,22 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
                     </li>
-                    <!-- Add more navigation items here -->
-                    <!-- Login Button -->
+                    {% if current_user.is_authenticated %}
                     <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                            </a>
+                        </li>
+                    </ul>
+                    {% else %}
+                     <!-- Login Button -->
+                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('login') }}">Login</a>
                             </a>
                         </li>
                     </ul>
+                    {% endif %}
                 </ul>
             </div>
         </div>

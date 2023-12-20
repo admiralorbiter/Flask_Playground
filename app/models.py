@@ -17,7 +17,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -41,6 +41,10 @@ class User(db.Model):
     def get_id(self):
         # Assuming your user model has an 'id' field
         return str(self.id)
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)
 
 class Comment(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True)
