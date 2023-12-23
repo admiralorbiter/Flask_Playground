@@ -27,6 +27,13 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    ## Remove this before production, just short way to login
+    config = 'development'
+    if config=='development':
+        dev_user = User.query.get(1)  # Assuming user with ID 1 is your dev user
+        login_user(dev_user)
+        return redirect(url_for('home'))
+     
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     if request.method == 'POST':
@@ -372,8 +379,7 @@ def edit_project_overview(project_id):
               hx-trigger="submit"
               hx-target="#overview-container"
               hx-swap="outerHTML">
-            <label for="overview">Project Overview:</label>
-            <textarea id="overview" name="overview">{project.overview}</textarea>
+            <textarea id="overview" name="overview" rows="6" cols="50">{project.overview}</textarea>
             <button type="submit" class="btn btn-primary">Update Overview</button>
         </form>
         <!-- You can add a cancel button or other elements if needed -->
@@ -419,7 +425,7 @@ def add_comment(project_id):
     db.session.commit()
 
     comments_html = f"""
-            <div id="comment-{new_comment.comment_id}" class="col-2">
+            <div id="comment-{new_comment.comment_id}" class="col-3">
                 <div class="card">
                     <div class="card-body">
                         <p class="card-text">{new_comment.text}</p>

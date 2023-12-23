@@ -26,3 +26,10 @@ tr:nth-child(even) {
     border: 1px solid black;
     outline-style: inset;
 }
+
+.btn-xs {
+    padding: 1px 5px; /* Smaller padding */
+    font-size: 12px; /* Smaller font size */
+    line-height: 1; /* Adjust line-height as needed */
+    border-radius: 3px; /* Adjust border-radius as needed */
+}
