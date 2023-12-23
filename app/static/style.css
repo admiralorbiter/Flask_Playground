@@ -21,3 +21,8 @@ td, th {
 tr:nth-child(even) {
     background-color: #dddddd;
 }
+
+.outline{
+    border: 1px solid black;
+    outline-style: inset;
+}

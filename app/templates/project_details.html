@@ -4,21 +4,21 @@
 
 {% block content %}
 <h1>{{ project.name }}</h1>
-<div class="row">
+<div class="row p-3 outline">
     <div class="col-2">
-        <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
-        <p><strong>Priority:</strong> {{ project.priority }}</p>
-        <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
-        <p><strong>Short Description:</strong> {{ project.short_description }}</p>
-    </div>
-    <div class="col-2">
-        <h3>Team Members</h3>
+        <h3 class="fs-4">Team Members</h3>
         <p><strong>Lead Student:</strong> {{ project.project_lead.name if project.project_lead else "None" }}</p>
         <ul>
             {% for student in project.students %}
                 <li>{{ student.name }}</li>
             {% endfor %}
         </ul>
+    </div>
+    <div class="col-2">
+        <p><strong>Due Date:</strong> {{ project.due_date.strftime('%Y-%m-%d') if project.due_date else 'Not set' }}</p>
+        <p><strong>Priority:</strong> {{ project.priority }}</p>
+        <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
+        <p><strong>Short Description:</strong> {{ project.short_description }}</p>
     </div>
     <div class="col">
         <!-- Display Project Overview -->
