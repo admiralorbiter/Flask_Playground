@@ -210,29 +210,30 @@ def project_detail(id):
 @login_required
 def update_project(id):
     project = Project.query.get_or_404(id)
-
     try:
         # Update project's attributes based on form data
         project.name = request.form.get('name')
         project.overview = request.form.get('overview')
-        project.project_links = request.form.get('links')
-        project.comments = request.form.get('comments')
-        project.feedback = request.form.get('feedback')
         project.due_date = datetime.strptime(request.form.get('due_date'), '%Y-%m-%d') if request.form.get('due_date') else None
-        
         priority = request.form.get('priority', type=int)
-        if not 1<=priority<=5:
-            flash('Priority must be an integer between 1 and 5', 'error')
-            return redirect(url_for('project_detail', id=id))
+        if priority is not None:
+            if not 1 <= priority <= 5:
+                flash('Priority must be an integer between 1 and 5', 'error')
+                return redirect(url_for('project_detail', id=id))
+            else:
+                project.priority = priority
         else:
-            project.priority = priority
+            # Handle the case where priority is None, maybe set a default or flash a message
+            flash('Priority is required.', 'error')
 
         progress = request.form.get('progress', type=int)
         if progress is not None:
-            project.progress = progress
-        else:
-            flash('Progress must be an integer between 0 and 100', 'error')
-            return redirect(url_for('project_detail', id=id))
+            if not 0 <= progress <= 100:
+                flash('Progress must be an integer between 0 and 100', 'error')
+                return redirect(url_for('project_detail', id=id))
+            else:
+                project.progress = progress
+        
 
         project.short_description = request.form.get('short_description')
 
@@ -242,6 +243,7 @@ def update_project(id):
         flash('Project updated successfully!', 'success')
     except Exception as e:
         # Handle errors and roll back any changes
+        print(e)
         db.session.rollback()
         flash(f'An error occurred: {e}', 'danger')
 
