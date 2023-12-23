@@ -22,6 +22,13 @@ endblock %} {% block content %}
     <p><strong>Priority:</strong> {{ project.priority }}</p>
     <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
     <p><strong>Short Description:</strong> {{ project.short_description }}</p>
+    {% if current_user.is_authenticated %}
+    <div class="toggle-special-functionality">
+        <form method="post" hx-post="{{ url_for('toggle_special_functionality', project_id=project.project_id) }}">
+            <button type="submit" class="btn btn-info">Toggle Edit</button>
+        </form>
+    </div>
+    {% endif %}
   </div>
   <div class="col">
     <!-- Display Project Overview -->
@@ -215,7 +222,6 @@ endblock %} {% block content %}
 </div>
 <div class="row p-3 outline m-2">
   <h1>Edit {{ project.name }}</h1>
-
   <form
     action="{{ url_for('update_project', id=project.project_id) }}"
     method="post"
@@ -234,18 +240,23 @@ endblock %} {% block content %}
 
     <label for="priority">Priority:</label>
     <input
-      type="text"
+      type="range"
       id="priority"
       name="priority"
       value="{{ project.priority }}"
+      min="1"
+      max="5"
+      step="1"
     />
 
     <label for="progress">Progress:</label>
     <input
-      type="text"
+      type="number"
       id="progress"
       name="progress"
       value="{{ project.progress }}"
+      min="0"
+      max="100"
     />
 
     <label for="short_description">Short Description:</label>
@@ -255,8 +266,9 @@ endblock %} {% block content %}
       name="short_description"
       value="{{ project.short_description }}"
     />
-
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <div class="m-2">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
   </form>
 </div>
 {% endif %} {% endblock %}

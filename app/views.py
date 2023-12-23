@@ -1,5 +1,5 @@
 from app import app, db
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
 from app.models import Student, Project, Task, Link, project_students, Comment, User
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
@@ -485,3 +485,17 @@ def delete_comment(comment_id):
     comments_html = ""
     return comments_html
 
+@app.route('/toggle_special_functionality/<int:project_id>', methods=['POST'])
+@login_required
+def toggle_special_functionality(project_id):
+    # Toggle the special functionality state in the session
+    session_key = f'special_functionality_{project_id}'
+    special_functionality_enabled = session.get(session_key, False)
+    session[session_key] = not special_functionality_enabled
+    print(f"Special Functionality Enabled: {session[session_key]}")  # Debug print
+
+    # Prepare the redirect response
+    redirect_url = url_for('project_detail', id=project_id)
+    response = redirect(redirect_url)
+    response.headers['HX-Redirect'] = redirect_url
+    return response
