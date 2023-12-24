@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Programming Coach{% endblock %}
+{% block content %}
+    <h1>Chat with OpenAI</h1>
+    <div id="chatBox" style="height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll;">
+        <!-- Chat messages will appear here -->
+    </div>
+    <form id="chatForm" hx-post="/ask" hx-target="#chatBox" hx-swap="beforeend" class="mt-3">
+        <div class="form-group">
+            <label for="userQuery">Your Question:</label>
+            <input type="text" class="form-control" id="userQuery" name="query" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ask</button>
+    </form>
+{% endblock %}

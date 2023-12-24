@@ -7,6 +7,8 @@ from werkzeug.urls import url_parse
 
 from sqlalchemy import select, delete
 from flask_login import login_required
+import openai
+import os
 
 @app.route('/admin/dashboard')
 @login_required
@@ -538,3 +540,22 @@ def admin_link_users():
     students = Student.query.all()
     return render_template('admin_link_users.html', users=users, students=students)
 
+@app.route('/chat', methods=['GET'])
+def chat():
+    return render_template('chat.html')
+
+@app.route('/ask', methods=['POST'])
+@login_required
+def ask():
+    user_query = request.form['query']
+    # openai.api_key = os.getenv('OPENAI_API_KEY')
+    # response = openai.Completion.create(engine="davinci", prompt=user_query, max_tokens=150)
+    # bot_response = response.choices[0].text.strip()
+    bot_response = "Hello, this is just for testing."
+    # Create a multi-part response
+    chat_response = f'<div>{user_query}: {bot_response}</div>'
+    clear_input_script = '<script>document.getElementById("userQuery").value = "";</script>'
+    
+    # Combine the chat response and the script to clear the input field
+    combined_response = chat_response + clear_input_script
+    return combined_response
