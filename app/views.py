@@ -205,6 +205,10 @@ def project_detail(id):
     tasks = Task.query.filter_by(project_id=id).all()  # Fetch tasks for this project
     return render_template("project_details.html", project=project, tasks=tasks)
 
+@app.route("/student/<int:id>", methods=["GET"])
+def student_detail(id):
+    student = Student.query.get_or_404(id)
+    return render_template("student_details.html", student=student)
 
 @app.route("/project/update/<int:id>", methods=["POST"])
 @login_required
