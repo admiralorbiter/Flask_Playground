@@ -79,7 +79,7 @@ endblock %} {% block content %}
         <a href="{{ link.url|default('http://' + link.url) }}" target="_blank"
           >{{ link.url }}</a
         >
-        {% if current_user.is_authenticated %}
+        {% if current_user.is_authenticated and special_functionality_enabled %}
         <!-- Edit Link Button -->
         <button
           hx-get="{{ url_for('edit_link', link_id=link.id) }}"
@@ -140,7 +140,7 @@ endblock %} {% block content %}
         <div class="card">
           <div class="card-body">
             <p class="card-text">{{ comment.text }}</p>
-            {% if current_user.is_authenticated %}
+            {% if current_user.is_authenticated and special_functionality_enabled%}
             <!-- Edit Button -->
             <button
               hx-get="{{ url_for('edit_comment_form', comment_id=comment.comment_id) }}"
@@ -178,7 +178,7 @@ endblock %} {% block content %}
           <p class="card-text">{{ task.description }}</p>
           <p class="card-text">Progress: {{ task.progress }}%</p>
           <!-- Add other task details here -->
-          {% if current_user.is_authenticated %}
+          {% if current_user.is_authenticated and special_functionality_enabled%}
           <!-- Button to toggle the edit form -->
           <button
             hx-get="{{ url_for('update_task', task_id=task.task_id) }}"
@@ -204,7 +204,7 @@ endblock %} {% block content %}
     </div>
     {% else %}
     <p>No tasks found for this project.</p>
-    {% endfor %} {% if current_user.is_authenticated %}
+    {% endfor %} {% if current_user.is_authenticated and special_functionality_enabled%}
   </div>
   <!-- Form to Add a New Task -->
   <h3>Add a New Task</h3>
