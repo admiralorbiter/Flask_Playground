@@ -22,10 +22,13 @@ endblock %} {% block content %}
     <p><strong>Priority:</strong> {{ project.priority }}</p>
     <p><strong>Progress:</strong> {{ project.progress|int }}%</p>
     <p><strong>Short Description:</strong> {{ project.short_description }}</p>
-    {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated%}
     <div class="toggle-special-functionality">
-        <form method="post" hx-post="{{ url_for('toggle_special_functionality', project_id=project.project_id) }}">
-            <button type="submit" class="btn btn-info">Toggle Edit</button>
+        <form method="post"
+            hx-post="{{ url_for('toggle_special_functionality', project_id=project.project_id) }}"
+            hx-target="body"
+            hx-swap="outerHTML">
+          <button type="submit" class="btn btn-info">Toggle Edit</button>
         </form>
     </div>
     {% endif %}
@@ -35,7 +38,7 @@ endblock %} {% block content %}
     <h2>Project Overview</h2>
     <div id="overview-container" style="position: relative; min-height: 150px">
       <p id="project-overview">{{ project.overview }}</p>
-      {% if current_user.is_authenticated %}
+      {% if current_user.is_authenticated  and special_functionality_enabled %}
       <button
         hx-get="{{ url_for('edit_project_overview', project_id=project.project_id) }}"
         hx-trigger="click"

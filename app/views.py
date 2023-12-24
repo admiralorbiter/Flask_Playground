@@ -488,14 +488,13 @@ def delete_comment(comment_id):
 @app.route('/toggle_special_functionality/<int:project_id>', methods=['POST'])
 @login_required
 def toggle_special_functionality(project_id):
+    # Assume get_project_by_id is a function that returns a project object
+    project = Project.query.get_or_404(project_id)
+    
     # Toggle the special functionality state in the session
     session_key = f'special_functionality_{project_id}'
     special_functionality_enabled = session.get(session_key, False)
     session[session_key] = not special_functionality_enabled
-    print(f"Special Functionality Enabled: {session[session_key]}")  # Debug print
 
-    # Prepare the redirect response
-    redirect_url = url_for('project_detail', id=project_id)
-    response = redirect(redirect_url)
-    response.headers['HX-Redirect'] = redirect_url
-    return response
+    # Render and return the full page (or the part of the page you want to swap)
+    return render_template('project_details.html', project=project, special_functionality_enabled=session[session_key])
