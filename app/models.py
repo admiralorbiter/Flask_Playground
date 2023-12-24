@@ -13,12 +13,28 @@ task_students = db.Table('task_students',
     db.Column('student_id', db.Integer, db.ForeignKey('student.student_id'))
 )
 
+class UserStudentLink(db.Model):
+    __tablename__ = 'user_student_link'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'))
+
+    # Additional fields like 'assigned_by' to know who linked the student, etc.
+    assigned_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', backref='users')
+
+    linked_students = db.relationship('Student',
+                                      secondary='user_student_link',
+                                      backref=db.backref('linked_users', lazy='dynamic'),
+                                      foreign_keys=[UserStudentLink.user_id, UserStudentLink.student_id])
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

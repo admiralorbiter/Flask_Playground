@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for, flash, session
-from app.models import Student, Project, Task, Link, project_students, Comment, User
+from app.models import Student, Project, Task, Link, project_students, Comment, User, UserStudentLink
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -502,3 +502,23 @@ def toggle_special_functionality(project_id):
 
     # Render and return the full page (or the part of the page you want to swap)
     return render_template('project_details.html', project=project, special_functionality_enabled=session[session_key])
+
+@app.route('/admin/link-users', methods=['GET', 'POST'])
+@login_required
+def admin_link_users():
+    if not current_user.role.name == 'admin': 
+        return "Access denied", 403
+
+    if request.method == 'POST':
+        # Perform linking logic, e.g., retrieving user_id and student_id from the form and creating a new UserStudentLink
+        user_id = request.form.get('user_id')
+        student_id = request.form.get('student_id')
+        new_link = UserStudentLink(user_id=user_id, student_id=student_id, assigned_by=current_user.id)
+        db.session.add(new_link)
+        db.session.commit()
+        return redirect(url_for('admin_link_users'))
+
+    # On GET, render a template with forms to create new links
+    users = User.query.all()  # Or some filtering if your user list is large
+    students = Student.query.all()
+    return render_template('admin_link_users.html', users=users, students=students)
