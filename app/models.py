@@ -13,16 +13,6 @@ task_students = db.Table('task_students',
     db.Column('student_id', db.Integer, db.ForeignKey('student.student_id'))
 )
 
-class UserStudentLink(db.Model):
-    __tablename__ = 'user_student_link'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'))
-
-    # Additional fields like 'assigned_by' to know who linked the student, etc.
-    assigned_by = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -30,10 +20,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', backref='users')
 
-    linked_students = db.relationship('Student',
-                                      secondary='user_student_link',
-                                      backref=db.backref('linked_users', lazy='dynamic'),
-                                      foreign_keys=[UserStudentLink.user_id, UserStudentLink.student_id])
+    linked_students = db.relationship('Student', backref='linked_by', lazy=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -76,6 +63,9 @@ class Comment(db.Model):
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='student_links')
 
     # Relationship where student is a team member
     projects = db.relationship('Project', secondary=project_students, 

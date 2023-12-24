@@ -15,7 +15,7 @@
         <label for="student">Student:</label>
         <select name="student_id" id="student">
             {% for student in students %}
-            <option value="{{ student.id }}">{{ student.name }}</option>
+            <option value="{{ student.student_id }}">{{ student.name }}</option>
             {% endfor %}
         </select>
     </div>
