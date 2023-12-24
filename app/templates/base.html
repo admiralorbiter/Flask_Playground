@@ -21,7 +21,7 @@
                         <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
                     </li>
                     <!-- Admin Dashboard Link -->
-                    {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
+                    {% if current_user.is_authenticated and current_user.is_admin %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
                     </li>

@@ -211,6 +211,12 @@ def student_detail(id):
     student = Student.query.get_or_404(id)
     return render_template("student_details.html", student=student)
 
+@app.route("/user/<int:id>", methods=["GET"])
+@login_required
+def user_detail(id):
+    user = User.query.get_or_404(id)
+    return render_template("user_details.html", user=user)
+
 @app.route("/project/update/<int:id>", methods=["POST"])
 @login_required
 def update_project(id):

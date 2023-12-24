@@ -6,20 +6,10 @@
     <h1>{{ student.name }}</h1>
     <div>
         <strong>User:</strong> {{ student.user.username }} <!-- Assuming 'user' is the related field in the Student model -->
-        <!-- Display all linked students for this user -->
-        <h3>Linked Students:</h3>
-        <ul>
-            {% for linked_student in student.user.linked_students %}
-                <li>{{ linked_student.name }}</li>
-            {% else %}
-                <p>No linked students found for this user.</p>
-            {% endfor %}
-        </ul>
     </div>
     <div class="row p-3 outline m-2">
         Projects:
         {% for project in student.projects %}
-        <p>{{ project.name }}</p>
         <a href="{{ url_for('project_detail', id=project.project_id) }}">{{ project.name }}</a>
         {% endfor %}
     </div>

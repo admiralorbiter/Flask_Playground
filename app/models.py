@@ -31,6 +31,10 @@ class User(db.Model):
     @property
     def is_authenticated(self):
         return True
+    
+    @property
+    def is_admin(self):
+        return (self.role.name == 'admin')
 
     @property
     def is_active(self):
