@@ -20,6 +20,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', backref='users')
     email = db.Column(db.String(120), index=True, unique=True)
+    student = db.relationship('Student', back_populates='user', uselist=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -69,7 +70,7 @@ class Student(db.Model):
     last_name = db.Column(db.String)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref='student_links')
+    user = db.relationship('User', back_populates='student')
 
     # Relationship where student is a team member
     projects = db.relationship('Project', secondary=project_students, 

@@ -13,6 +13,9 @@
                 <th scope="col">Username</th>
                 <th scope="col">Role</th>
                 <th scope="col">User Profile</th>
+                <th scope="col">Email</th>
+                <th scope="col">Name</th>
+                <th scope="col">Project List</th>
             </tr>
         </thead>
         <tbody> 
@@ -21,6 +24,17 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.role.name }}</td>
                 <td><a href="{{ url_for('user_detail', id=user.id) }}">Link</a></td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {{user.student.first_name}} {{user.student.last_name}}
+                </td>
+                <td>
+                    <ul>
+                        {% for project in user.student.projects %}
+                        <li>{{ project.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

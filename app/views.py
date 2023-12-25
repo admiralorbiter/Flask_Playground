@@ -13,13 +13,13 @@ import os
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
-    print(current_user.role.name)
-    print(current_user.role)
+
     if not current_user.role or current_user.role.name != 'admin':
         # Redirect non-admin users or show an error message
         return redirect(url_for('index'))
 
     users = User.query.all()
+    students = Student.query.all()
     return render_template('admin_dashboard.html', users=users)
 
 @app.route("/", methods=["GET"])
@@ -69,9 +69,11 @@ def create_user():
         def add_student(first_name, last_name):
             student = Student(first_name=first_name.strip(), last_name=last_name.strip())
             student.user_id = user.id
+            student.user=user
             db.session.add(student)
             db.session.flush()  # Ensure the student gets an ID if it's a new entry
             print(f"Added new student with ID: {student.student_id}")
+            print(student.user)
             return student
 
         # Create new user and set password
@@ -80,11 +82,11 @@ def create_user():
         user.email = email
         user.role_id = role
         student=add_student(first_name, last_name)
-        user.linked_student = student.student_id
+        user.student=student
         db.session.add(user)
         db.session.commit()
 
-
+        print(user.student)
         # Redirect to login page after successful signup
         return redirect(url_for('login'))
 
