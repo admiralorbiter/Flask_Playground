@@ -250,24 +250,41 @@ def update_project(id):
 # Updates a project overview based on the project_id
 # Linked to the edit button on the project details page
 # Separate button than the update project button
-@app.route("/project/update_project_overview/<int:project_id>", methods=["POST"])
+@app.route("/project/update_project_overview/<int:project_id>", methods=["GET", "POST"])
 @login_required
 def update_project_overview(project_id):
     project = Project.query.get_or_404(project_id)
-    try:
-        project.overview = request.form.get("overview")
-        db.session.commit()
 
-        # HTML Response Linked to project_details.html
-        return f"""
-        <div id="overview-container" style="position: relative; min-height: 150px;">
-            <p id="project-overview">{ project.overview }</p>
+    # If the request is a GET, return the edit form
+    if request.method == "GET":
+        edit_form_html = f"""
+        <div id="overview-container">
+            <form hx-post="{url_for('update_project_overview', project_id=project.project_id)}"
+                hx-trigger="submit"
+                hx-target="#overview-container"
+                hx-swap="outerHTML">
+                <textarea id="overview" name="overview" rows="6" cols="50">{project.overview}</textarea>
+                <button type="submit" class="btn btn-primary">Update Overview</button>
+            </form>
         </div>
-    """
-    except Exception as e:
-        db.session.rollback()
-        flash(f'An error occurred: {e}', 'danger')
-        return '', 500  # HTTP 500 for server error
+        """
+
+        return edit_form_html
+    else:
+        try:
+            project.overview = request.form.get("overview")
+            db.session.commit()
+
+            # HTML Response Linked to project_details.html
+            return f"""
+            <div id="overview-container" style="position: relative; min-height: 150px;">
+                <p id="project-overview">{ project.overview }</p>
+            </div>
+        """
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred: {e}', 'danger')
+            return '', 500  # HTTP 500 for server error
 
 # Delete Project
 # Deletes a project based on the project_id
@@ -476,36 +493,22 @@ def delete_link(link_id):
 
     return ""
 
-@app.route("/project/edit_project_overview/<int:project_id>", methods=["GET"])
-@login_required
-def edit_project_overview(project_id):
-    project = Project.query.get_or_404(project_id)
-
-    # Generate HTML for the edit form
-    edit_form_html = f"""
-    <div id="overview-container">
-        <form hx-post="{url_for('update_project_overview', project_id=project.project_id)}"
-              hx-trigger="submit"
-              hx-target="#overview-container"
-              hx-swap="outerHTML">
-            <textarea id="overview" name="overview" rows="6" cols="50">{project.overview}</textarea>
-            <button type="submit" class="btn btn-primary">Update Overview</button>
-        </form>
-        <!-- You can add a cancel button or other elements if needed -->
-    </div>
-    """
-
-    return edit_form_html
-    
-
+## Comment Routes ##  Comment Routes ##  Comment Routes ##  Comment Routes ##  Comment Routes ##  Comment Routes ##
+# Add Comment to Project
+# Adds a comment to a project based on the project_id
+# Note: Currently when you add a new comment, the edit and delete buttons will show up no matter what. Right now that is intended
 @app.route('/add-comment/<int:project_id>', methods=['POST'])
 @login_required
 def add_comment(project_id):
+    # Create a new comment based on the form data
     new_comment_text = request.form.get('comment_text')
     new_comment = Comment(text=new_comment_text, project_id=project_id)
+
+    # Add the comment to the database
     db.session.add(new_comment)
     db.session.commit()
 
+    # HTML Response Linked to project_details.html Add New Comment Button
     comments_html = f"""
             <div id="comment-{new_comment.comment_id}" class="col-3">
                 <div class="card">
@@ -525,14 +528,19 @@ def add_comment(project_id):
         """
     return comments_html
 
+# Edit Comment Form
+# Edits a comment based on the comment_id
+# Note: Doesn't check to see if the user is the owner of the comment
 @app.route('/edit-comment-form/<int:comment_id>')
 @login_required
 def edit_comment_form(comment_id):
     comment = Comment.query.get_or_404(comment_id)
+    
+    # HTML to edit the comment
     edit_form_html = f"""
         <form method='POST' hx-post='{url_for("update_comment", comment_id=comment.comment_id)}' hx-target='#comment-{comment.comment_id}'>
             <textarea name='comment_text'>{comment.text}</textarea>
-            <button type='submit' class="btn btn-primary">Update Comment</button>
+            <button type='submit' class="btn btn-sm btn-primary">Update Comment</button>
         </form>
     """
     return edit_form_html
