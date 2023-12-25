@@ -1,0 +1,30 @@
+<h1>Project Manager</h1>
+{% if current_user.is_authenticated %}
+<form hx-post="/create_project" hx-swap="beforeend" hx-target="#new-project" class="mb-3">
+    <input type="text" placeholder="Project" name="title" class="form-control mb-3" />
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endif %}
+<table class="table">
+    <thead>
+        <tr>
+          <th scope="col">Project</th>
+          <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="new-project" hx-target="closest tr" hx-swap="outerHTML swap:0.5s"> 
+        {% for project in projects %}
+        <tr>
+            <td><a href="{{ url_for('project_detail', id=project.project_id) }}">{{ project.name }}</a></td>
+            <td>
+                {% if current_user.is_authenticated %}
+                    <!-- Display delete button -->
+                    <button class="btn btn-danger" hx-delete="/delete/{{ project.project_id }}" hx-target="closest tr" hx-swap="outerHTML">
+                        Delete
+                    </button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

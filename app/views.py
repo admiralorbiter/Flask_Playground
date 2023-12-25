@@ -572,3 +572,8 @@ def ask():
     # Combine the chat response and the script to clear the input field
     combined_response = chat_response + clear_input_script
     return combined_response
+
+@app.route('/project_manager')
+def project_manager():
+    projects = Project.query.all()
+    return render_template('project_manager_page.html', projects=projects)
