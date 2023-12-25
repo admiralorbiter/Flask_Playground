@@ -40,6 +40,14 @@ def user_detail(id):
     user = User.query.get_or_404(id)
     return render_template("user_details.html", user=user)
 
+## Project Manager
+# Project Manager Page
+# Shows all projects in the database, Public Page
+@app.route('/project_manager')
+def project_manager():
+    projects = Project.query.all()
+    return render_template('project_manager_page.html', projects=projects)
+
 ## ADMIN ROUTES ##  ADMIN ROUTES ##  ADMIN ROUTES ##  ADMIN ROUTES ##  ADMIN ROUTES ##  ADMIN ROUTES ## 
 # Admin Dashboard
 # Shows Student Name, username, role, email, profile and projects
@@ -53,6 +61,36 @@ def admin_dashboard():
 
     users = User.query.all()
     return render_template('admin_dashboard.html', users=users)
+# Link Users
+# Allows Admin to link a user to a student
+# Note: Depreciated, will remove in future. Currently linking when admin creates user
+@app.route('/admin/link-users', methods=['GET', 'POST'])
+@login_required
+def admin_link_users():
+    if not current_user.role.name == 'admin': 
+        return "Access denied", 403
+
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        student_id = request.form.get('student_id')
+
+        # Find the user and student from the database
+        user = User.query.get(user_id)
+        student = Student.query.get(student_id)
+
+        if user and student:
+            # Link the student to the user
+            student.user_id = user.id
+            db.session.commit()
+            print(f'Successfully linked User ID: {user_id} with Student ID: {student_id}.')
+            return redirect(url_for('admin_link_users'))
+        else:
+            print("User or Student not found.")
+
+    # On GET, render a template with forms to create new links
+    users = User.query.all()  # Or some filtering if your user list is large
+    students = Student.query.all()
+    return render_template('admin_link_users.html', users=users, students=students)
 
 ## Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##
 # Login Page
@@ -515,7 +553,7 @@ def add_comment(project_id):
                     <div class="card-body">
                         <p class="card-text">{new_comment.text}</p>
                         <!-- Edit Button -->
-                        <button hx-get="{ url_for('edit_comment_form', comment_id=new_comment.comment_id) }" 
+                        <button hx-get="{ url_for('update_comment', comment_id=new_comment.comment_id) }" 
                                 hx-target="#comment-{new_comment.comment_id}" 
                                 class="btn btn-primary btn-sm">Edit</button>
                         <!-- Delete Button -->
@@ -528,51 +566,54 @@ def add_comment(project_id):
         """
     return comments_html
 
-# Edit Comment Form
-# Edits a comment based on the comment_id
+# Update Comment
+# Updates a comment based on the comment_id and get and post methods
 # Note: Doesn't check to see if the user is the owner of the comment
-@app.route('/edit-comment-form/<int:comment_id>')
-@login_required
-def edit_comment_form(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
-    
-    # HTML to edit the comment
-    edit_form_html = f"""
-        <form method='POST' hx-post='{url_for("update_comment", comment_id=comment.comment_id)}' hx-target='#comment-{comment.comment_id}'>
-            <textarea name='comment_text'>{comment.text}</textarea>
-            <button type='submit' class="btn btn-sm btn-primary">Update Comment</button>
-        </form>
-    """
-    return edit_form_html
-
-@app.route('/update-comment/<int:comment_id>', methods=['POST'])
+@app.route('/update-comment/<int:comment_id>', methods=['GET', 'POST'])
 @login_required
 def update_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
-    comment.text = request.form.get('comment_text')
-    db.session.commit()
 
-    updated_comment_html = f"""
-        <div id="comment-{comment.comment_id}">
-            <p>{comment.text}</p>
-            <button hx-get='{url_for('edit_comment_form', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}" class="btn btn-primary">Edit</button>
-            <button hx-post='{url_for('delete_comment', comment_id=comment.comment_id)}' hx-target="#comment-{comment.comment_id}" class="btn btn-danger">Delete</button>
-        </div>
-    """
-    return updated_comment_html
-
+    if request.method == 'GET':
+        # HTML to edit the comment
+        edit_form_html = f"""
+            <form method='POST' hx-post='{url_for("update_comment", comment_id=comment.comment_id)}' hx-target='#comment-{comment.comment_id}'>
+                <textarea name='comment_text'>{comment.text}</textarea>
+                <button type='submit' class="btn btn-sm btn-primary">Update Comment</button>
+            </form>
+        """
+        return edit_form_html
+    else:
+        comment.text = request.form.get('comment_text')
+        db.session.commit()
+        # HTML Response Linked to project_details.html Add New Comment Button
+        comments_html = f"""
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">{comment.text}</p>
+                    <!-- Edit Button -->
+                    <button hx-get="{ url_for('update_comment', comment_id=comment.comment_id) }" 
+                            hx-target="#comment-{comment.comment_id}" 
+                            class="btn btn-primary btn-sm">Edit</button>
+                    <!-- Delete Button -->
+                    <button hx-post="{ url_for('delete_comment', comment_id=comment.comment_id) }" 
+                            hx-target="#comment-{comment.comment_id}" 
+                            class="btn btn-danger btn-sm">Delete</button>
+                </div>
+            </div>
+            """
+        return comments_html
+# Delete Comment
+# Deletes a comment based on the comment_id
 @app.route('/delete-comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
-    project_id = comment.project_id
     db.session.delete(comment)
     db.session.commit()
+    return ""
 
-    project = Project.query.get_or_404(project_id)
-    comments_html = ""
-    return comments_html
-
+## SPECIAL ROUTES ##  SPECIAL ROUTES ##  SPECIAL ROUTES ##  SPECIAL ROUTES ##  SPECIAL ROUTES ##  SPECIAL ROUTES ##
 @app.route('/toggle_special_functionality/<int:project_id>', methods=['POST'])
 @login_required
 def toggle_special_functionality(project_id):
@@ -587,38 +628,15 @@ def toggle_special_functionality(project_id):
     # Render and return the full page (or the part of the page you want to swap)
     return render_template('project_details.html', project=project, special_functionality_enabled=session[session_key])
 
-@app.route('/admin/link-users', methods=['GET', 'POST'])
-@login_required
-def admin_link_users():
-    if not current_user.role.name == 'admin': 
-        return "Access denied", 403
-
-    if request.method == 'POST':
-        user_id = request.form.get('user_id')
-        student_id = request.form.get('student_id')
-
-        # Find the user and student from the database
-        user = User.query.get(user_id)
-        student = Student.query.get(student_id)
-
-        if user and student:
-            # Link the student to the user
-            student.user_id = user.id
-            db.session.commit()
-            print(f'Successfully linked User ID: {user_id} with Student ID: {student_id}.')
-            return redirect(url_for('admin_link_users'))
-        else:
-            print("User or Student not found.")
-
-    # On GET, render a template with forms to create new links
-    users = User.query.all()  # Or some filtering if your user list is large
-    students = Student.query.all()
-    return render_template('admin_link_users.html', users=users, students=students)
-
+## Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##
+# Coaching Page
+# Shows the coaching page
 @app.route('/chat', methods=['GET'])
 def chat():
     return render_template('chat.html')
 
+# Ask
+# Asks the bot a question, currently just returns a test response
 @app.route('/ask', methods=['POST'])
 @login_required
 def ask():
@@ -634,8 +652,3 @@ def ask():
     # Combine the chat response and the script to clear the input field
     combined_response = chat_response + clear_input_script
     return combined_response
-
-@app.route('/project_manager')
-def project_manager():
-    projects = Project.query.all()
-    return render_template('project_manager_page.html', projects=projects)
