@@ -21,7 +21,8 @@ class User(db.Model):
     role = db.relationship('Role', backref='users')
     email = db.Column(db.String(120), index=True, unique=True)
     student = db.relationship('Student', back_populates='user', uselist=False)
-
+    priority_task = db.Column(db.Integer, db.ForeignKey('task.task_id'))
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

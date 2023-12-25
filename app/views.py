@@ -1,5 +1,5 @@
 from app import app, db
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import Response, render_template, request, redirect, url_for, flash, session
 from app.models import Student, Project, Task, Link, project_students, Comment, User
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
@@ -9,6 +9,7 @@ from sqlalchemy import delete
 #Notes:
 # each time I commit to database, i should have try, except, rollback, flash
 # each time I delete I should confirm with the user like in tasks
+# URGENT: Refactor ID name, currently using project_id, task_id, etc. Should be id, losing too much time on this
 
 # Home Page
 @app.route("/", methods=["GET"])
@@ -157,7 +158,7 @@ def create_user():
         user.set_password(password)
         user.email = email
         user.role_id = role
-        user.role.name=role
+        # user.role.name=role
         student=add_student(first_name, last_name)
         user.student=student
         db.session.add(user)
@@ -433,6 +434,64 @@ def delete_task(task_id):
         flash(f'An error occurred while deleting the task: {e}', 'danger')
 
     return ""
+
+# Assign Task
+# Lets admin assign a task to a user
+@app.route('/assign_task/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def assign_task(user_id):
+    if not current_user.is_admin:
+        return "Access denied", 403
+    user = User.query.get_or_404(user_id)
+    tasks = Task.query.all()
+    if request.method == 'POST':
+        existing_task_id = request.form.get('existing-task')
+        name = request.form.get('name')
+        description = request.form.get('description')
+
+        # Determine the task to assign
+        if existing_task_id:
+            # Assign the existing task as a priority task
+            task = Task.query.get(existing_task_id)
+        else:
+            # Or create a new task
+            task = Task(name=name, description=description, priority=1)
+            db.session.add(task)
+
+        # Ensure only one priority task per user
+        if user.priority_task:
+            # Reset the priority of the existing task
+            old_priority_task = Task.query.get(user.priority_task)
+            old_priority_task.priority = 0  # or however you denote a non-priority task
+
+        # Set the new priority task for the user
+        user.priority_task = task.task_id
+
+        db.session.commit()
+        response = Response("", 204)  # 204 means "No Content"
+        response.headers['HX-Redirect'] = url_for('user_detail', id=user.id)
+        return response
+    return render_template('assign_task.html', user=user, tasks=tasks)
+
+# Get New Task Field
+# Helper function for assigning tasks
+@app.route('/get_new_task_fields/<int:user_id>')
+@login_required
+def get_new_task_fields(user_id):
+    selected_task = request.args.get('existing-task')
+    if selected_task:
+        # If an existing task is selected, no need to show new task fields
+        return ''
+    else:
+        # If 'Create New Task' is selected, return the fields for creating a new task
+        return f'''
+            <label for="title">Task Title:</label>
+            <input type="text" name="title" required>
+
+            <label for="description">Task Description:</label>
+            <textarea name="description" required></textarea>
+        '''
+
 ## Link Routes ##  Link Routes ##  Link Routes ##  Link Routes ##  Link Routes ##  Link Routes ##
 # Add Link to Project
 # Adds a link to a project based on the project_id

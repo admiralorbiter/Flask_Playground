@@ -1,0 +1,17 @@
+<form method="POST" hx-post="/assign_task/{{ user.id }}" hx-target="#task-form" hx-swap="outerHTML">
+    <!-- Dropdown for existing tasks -->
+    <label for="existing-task">Choose an Existing Task:</label>
+    <select name="existing-task" id="existing-task" hx-get="/get_new_task_fields/{{ user.id }}" hx-trigger="change" hx-target="#new-task-fields">
+        <!-- Dynamically populate with existing tasks -->
+        {% for task in tasks %}
+        <option value="{{ task.task_id }}">{{ task.name }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Container for new task fields -->
+    <div id="new-task-fields">
+        <!-- This will be replaced with the fields for creating a new task if needed -->
+    </div>
+
+    <button type="submit">Assign Task</button>
+</form>
