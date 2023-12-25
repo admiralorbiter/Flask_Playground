@@ -121,9 +121,9 @@ def home():
   projects = Project.query.all()
   return render_template("index.html", projects=projects)
 
-@app.route("/submit", methods=["POST"])
+@app.route("/create_project", methods=["POST"])
 @login_required
-def submit():
+def create_project():
     name = request.form["title"]
 
     # Create a new project
