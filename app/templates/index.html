@@ -7,8 +7,6 @@
     {% if current_user.is_authenticated %}
     <form hx-post="/submit" hx-swap="beforeend" hx-target="#new-project" class="mb-3">
         <input type="text" placeholder="Project" name="title" class="form-control mb-3" />
-        <input type="text" placeholder="Student Lead" name="lead" class="form-control mb-3" />
-        <input type="text" placeholder="Team Members (comma separated)" name="team" class="form-control mb-3" />
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     {% endif %}
@@ -16,8 +14,6 @@
         <thead>
             <tr>
               <th scope="col">Project</th>
-              <th scope="col">Student Lead</th>
-              <th scope="col">Team</th>
               <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -25,16 +21,6 @@
             {% for project in projects %}
             <tr>
                 <td><a href="{{ url_for('project_detail', id=project.project_id) }}">{{ project.name }}</a></td>
-                <td>
-                    {{ project.students[0].name if project.students else 'No lead' }}
-                </td>
-                <td>
-                    {% for student in project.students[1:] %}
-                    <a href="{{ url_for('student_detail', id=student.student_id) }}">{{ student.name }}</a>{% if not loop.last %}, {% endif %}
-                    {% else %}
-                        No team members
-                    {% endfor %}
-                </td>
                 <td>
                     {% if current_user.is_authenticated %}
                         <!-- Display delete button -->

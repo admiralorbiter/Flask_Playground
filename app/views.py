@@ -125,46 +125,20 @@ def home():
 @login_required
 def submit():
     name = request.form["title"]
-    lead_name = request.form["lead"]
-    team_names = request.form["team"].split(',')
-
-    # Function to add a student to the project
-    def add_student(name):
-        student = Student.query.filter_by(name=name.strip()).first()
-        if not student:
-            student = Student(name=name.strip())
-            db.session.add(student)
-            db.session.flush()  # Ensure the student gets an ID if it's a new entry
-            print(f"Added new student with ID: {student.student_id}")
-        return student
 
     # Create a new project
     project = Project(name=name)
 
-    # Set the lead student
-    lead_student = add_student(lead_name)
-    project.project_lead = lead_student  # Use the backref from the Student model
-
     # Default Values
     project.progress = 0
-
-    # Add other team members
-    for member_name in team_names:
-        if member_name.strip() and member_name.strip() != lead_name:
-            project.team_members.append(add_student(member_name))
-
     db.session.add(project)
     db.session.commit()
 
-    # Prepare team member names for the response
-    team_member_names = ', '.join([student.name for student in project.team_members])
     project_detail_url = url_for('project_detail', id=project.project_id)
     
     response = f"""
     <tr>
        <td><a href="{project_detail_url}">{project.name}</a></td>
-        <td>{lead_student.name}</td>
-        <td>{team_member_names}</td>
         <td>
             <button hx-delete="/delete/{project.project_id}"
                 class="btn btn-danger">
