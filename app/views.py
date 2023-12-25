@@ -410,65 +410,59 @@ def cancel_edit_link(link_id):
     return f'''
     <li hx-swap="outerHTML" id="link-{link.id}">
         <a href="{link.url}" target="_blank">{link.url}</a>
-        <button hx-get="{url_for('edit_link', link_id=link.id)}" class="btn btn-xs btn-primary">Edit</button>
+        <button hx-get="{url_for('update_link', link_id=link.id)}" class="btn btn-xs btn-primary">Edit</button>
         <button hx-post="{url_for('delete_link', link_id=link.id)}" hx-confirm="Are you sure you want to delete this link?" hx-target="closest li" hx-swap="outerHTML" class="btn btn-xs btn-danger">Delete</button>
     </li>
     '''
-
-# Edits a link based on the link_id. 
-@app.route("/edit_link/<int:link_id>", methods=["GET"])
-@login_required
-def edit_link(link_id):
-    link = Link.query.get_or_404(link_id)
-
-    # HTML Response Linked to project_details.html Link Edit/Delete Buttons
-    response = f"""
-    <form hx-post="{url_for('update_link', link_id=link.id)}" hx-swap="outerHTML" id="link-{link.id}">
-        <input type="hidden" name="project_id" value="{link.project_id}">
-        <input type="text" name="url" value="{link.url}" placeholder="Edit URL">
-        <button type="button" hx-get="{url_for('cancel_edit_link', link_id=link.id)}" hx-target="#link-{link.id}" hx-swap="outerHTML" class="btn btn-xs btn-danger">Cancel</button>
-        <button type="submit" class="btn btn-xs btn-primary">Save</button>
-    </form>
-    """
-    return response
-
-@app.route("/update_link/<int:link_id>", methods=["POST"])
+# Update Link
+# Updates a link based on the link_id and get and post methods
+@app.route("/update_link/<int:link_id>", methods=['GET', 'POST'])
 @login_required
 def update_link(link_id):
     link = Link.query.get_or_404(link_id)
     
-    try:
-        new_url = request.form.get("url")
-        # Add form validation here if necessary
-
-        link.url = new_url
-        db.session.commit()
-
-        # Return an HTML snippet or JSON for HTMX to update the UI
-        updated_link_html = f"""
-                <li id="link-{ link.id }">
-            <a href="{ link.url}" target="_blank">{ link.url }</a>
-            
-        <!-- Edit Link Button -->
-        <button hx-get="{ url_for('edit_link', link_id=link.id) }"
-                hx-target="#link-{ link.id }"
-                hx-swap="outerHTML"
-                class="btn btn-sm btn-secondary">Edit</button>
-
-        <!-- Delete Link Button -->
-        <button hx-post="{ url_for('delete_link', link_id=link.id) }"
-                hx-confirm="Are you sure you want to delete this link?"
-                hx-target="closest div"
-                hx-swap="outerHTML"
-                class="btn btn-sm btn-danger">Delete</button>
-
-        </li>
+    # If the request is a GET, return the edit form
+    if request.method == 'GET':
+        # HTML Response Linked to project_details.html Link Edit/Delete Buttons
+        response = f"""
+        <form hx-post="{url_for('update_link', link_id=link.id)}" hx-swap="outerHTML" id="link-{link.id}">
+            <input type="hidden" name="project_id" value="{link.project_id}">
+            <input type="text" name="url" value="{link.url}" placeholder="Edit URL">
+            <button type="button" hx-get="{url_for('cancel_edit_link', link_id=link.id)}" hx-target="#link-{link.id}" hx-swap="outerHTML" class="btn btn-xs btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-xs btn-primary">Save</button>
+        </form>
         """
-        return updated_link_html
-    except (Exception) as e:
-        db.session.rollback()
-        return f"<div>Error: {e}</div>", 500
+        return response
+    else:
+        try:
+            new_url = request.form.get("url")
 
+            link.url = new_url
+            db.session.commit()
+
+            # HTML Response Linked to project_details.html Link Edit/Delete Buttons
+            updated_link_html = f"""
+                <li id="link-{ link.id }">
+                    <a href="{ link.url}" target="_blank">{ link.url }</a>
+                        <button hx-get="{ url_for('update_link', link_id=link.id) }"
+                                hx-target="#link-{ link.id }"
+                                hx-swap="outerHTML"
+                                class="btn btn-xs btn-primary">Edit</button>
+
+                        <button hx-post="{ url_for('delete_link', link_id=link.id) }"
+                                hx-confirm="Are you sure you want to delete this link?"
+                                hx-target="closest div"
+                                hx-swap="outerHTML"
+                                class="btn btn-xs btn-danger">Delete</button>
+                </li>
+            """
+            return updated_link_html
+        except (Exception) as e:
+            db.session.rollback()
+            return f"<div>Error: {e}</div>", 500
+
+# Delete Link
+# Deletes a link based on the link_id
 @app.route("/delete_link/<int:link_id>", methods=["POST"])
 @login_required
 def delete_link(link_id):
@@ -476,12 +470,11 @@ def delete_link(link_id):
     try:
         db.session.delete(link)
         db.session.commit()
-        flash('Link deleted successfully!', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'An error occurred while deleting the link: {e}', 'danger')
 
-    return "Link deleted successfully!"  # You can return any message or empty response as needed
+    return ""
 
 @app.route("/project/edit_project_overview/<int:project_id>", methods=["GET"])
 @login_required
