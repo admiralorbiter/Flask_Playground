@@ -37,6 +37,9 @@ def student_detail(id):
 @app.route("/user/<int:id>", methods=["GET"])
 @login_required
 def user_detail(id):
+    # Checks to see if the user is the admin or the user is the owner of the page
+    if not current_user.id == id and not current_user.role.name == 'admin':
+        return "Access denied", 403
     user = User.query.get_or_404(id)
     return render_template("user_details.html", user=user)
 
