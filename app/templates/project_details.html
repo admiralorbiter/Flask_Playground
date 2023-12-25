@@ -178,7 +178,7 @@ endblock %} {% block content %}
           <p class="card-text">{{ task.description }}</p>
           <p class="card-text">Progress: {{ task.progress }}%</p>
           <!-- Add other task details here -->
-          {% if current_user.is_authenticated and special_functionality_enabled%}
+          {% if current_user.is_authenticated%}
           <!-- Button to toggle the edit form -->
           <button
             hx-get="{{ url_for('update_task', task_id=task.task_id) }}"
@@ -193,7 +193,7 @@ endblock %} {% block content %}
             hx-post="{{ url_for('delete_task', task_id=task.task_id) }}"
             class="delete-task-button btn btn-sm btn-danger"
             hx-confirm="Are you sure you want to delete this task?"
-            hx-target="closest div"
+            hx-target="closest .card"
             hx-swap="outerHTML"
           >
             Delete Task
