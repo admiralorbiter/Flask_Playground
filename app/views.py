@@ -53,8 +53,45 @@ def login():
         return redirect(next_page)
     return render_template('login.html')
 
+@app.route('/create_user', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        role = request.form['role']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        # Add more form validations as necessary
+
+        # Function to add a student to the project
+        def add_student(first_name, last_name):
+            student = Student(first_name=first_name.strip(), last_name=last_name.strip())
+            student.user_id = user.id
+            db.session.add(student)
+            db.session.flush()  # Ensure the student gets an ID if it's a new entry
+            print(f"Added new student with ID: {student.student_id}")
+            return student
+
+        # Create new user and set password
+        user = User(username=username)
+        user.set_password(password)
+        user.email = email
+        user.role_id = role
+        student=add_student(first_name, last_name)
+        user.linked_student = student.student_id
+        db.session.add(user)
+        db.session.commit()
+
+
+        # Redirect to login page after successful signup
+        return redirect(url_for('login'))
+
+    return render_template('create_user.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
+@login_required
 def signup():
     if request.method == 'POST':
         username = request.form['username']

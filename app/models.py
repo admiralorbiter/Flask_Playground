@@ -19,8 +19,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', backref='users')
-
-    linked_students = db.relationship('Student', backref='linked_by', lazy=True)
+    email = db.Column(db.String(120), index=True, unique=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -66,7 +65,8 @@ class Comment(db.Model):
 
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='student_links')

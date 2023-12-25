@@ -4,15 +4,15 @@
 
 {% block content %}
     <h1>Admin Dashboard</h1>
-    <a href="{{ url_for('admin_link_users') }}">Create User</a>
+    <h2>Admin Tools</h2>
+    <a href="{{ url_for('admin_link_users') }}">Link Users (Old)</a>
+    <a href="{{ url_for('create_user') }}">Create Users</a>
     <table class="table">
         <thead>
             <tr>
                 <th scope="col">Username</th>
                 <th scope="col">Role</th>
-                <th scope="col">Link</th>
-                <th scope="col">Linked Student</th>
-                <!-- Add more columns as needed -->
+                <th scope="col">User Profile</th>
             </tr>
         </thead>
         <tbody> 
@@ -20,9 +20,7 @@
             <tr>
                 <td>{{ user.username }}</td>
                 <td>{{ user.role.name }}</td>
-                <td><a href="{{ url_for('admin_link_users', user_id=user.id) }}">Link</a></td>
-                <td>{{ user.linked_students[0].name }}</td>
-                <!-- Display other user attributes as needed -->
+                <td><a href="{{ url_for('user_detail', id=user.id) }}">Link</a></td>
             </tr>
             {% endfor %}
         </tbody>
