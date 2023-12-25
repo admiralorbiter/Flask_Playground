@@ -448,9 +448,11 @@ def assign_task(user_id):
         existing_task_id = request.form.get('existing-task')
         name = request.form.get('name')
         description = request.form.get('description')
-
         # Determine the task to assign
-        if existing_task_id:
+        if existing_task_id=='create-new-task':
+            task = Task(name=name, description=description, priority=1)
+            db.session.add(task)
+        elif existing_task_id:
             # Assign the existing task as a priority task
             task = Task.query.get(existing_task_id)
         else:
@@ -463,10 +465,8 @@ def assign_task(user_id):
             # Reset the priority of the existing task
             old_priority_task = Task.query.get(user.priority_task)
             old_priority_task.priority = 0  # or however you denote a non-priority task
-
         # Set the new priority task for the user
         user.priority_task = task.task_id
-
         db.session.commit()
         response = Response("", 204)  # 204 means "No Content"
         response.headers['HX-Redirect'] = url_for('user_detail', id=user.id)
@@ -479,7 +479,17 @@ def assign_task(user_id):
 @login_required
 def get_new_task_fields(user_id):
     selected_task = request.args.get('existing-task')
-    if selected_task:
+    print(selected_task)
+    if selected_task == 'create-new-task':
+        # If 'Create New Task' is selected, return the fields for creating a new task
+        return f'''
+            <label for="name">Task Name:</label>
+            <input type="text" name="name" required>
+
+            <label for="description">Task Description:</label>
+            <textarea name="description" required></textarea>
+        '''
+    elif selected_task:
         # If an existing task is selected, no need to show new task fields
         return ''
     else:

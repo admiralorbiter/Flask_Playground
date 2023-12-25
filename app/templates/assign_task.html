@@ -6,6 +6,7 @@
         {% for task in tasks %}
         <option value="{{ task.task_id }}">{{ task.name }}</option>
         {% endfor %}
+        <option value="create-new-task">Create New Task</option>
     </select>
 
     <!-- Container for new task fields -->
