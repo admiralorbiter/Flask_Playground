@@ -8,6 +8,10 @@
         <div>
             <strong>Linked Student: </strong> 
         </div>
+        <div>
+            <p>Priority Task: {{user.priority_task.name}}</p>
+            <p>Priority Task Description: {{user.priority_task.description}}</p>
+        </div>
     {% endif %}
     {% if current_user.is_admin %}
         <div hx-get="/assign_task/{{ user.id }}" hx-trigger="click" hx-target="#task-form">

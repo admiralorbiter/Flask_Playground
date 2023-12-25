@@ -463,10 +463,11 @@ def assign_task(user_id):
         # Ensure only one priority task per user
         if user.priority_task:
             # Reset the priority of the existing task
-            old_priority_task = Task.query.get(user.priority_task)
+            old_priority_task = user.priority_task
             old_priority_task.priority = 0  # or however you denote a non-priority task
         # Set the new priority task for the user
-        user.priority_task = task.task_id
+        user.priority_task = task
+        print(user.priority_task)
         db.session.commit()
         response = Response("", 204)  # 204 means "No Content"
         response.headers['HX-Redirect'] = url_for('user_detail', id=user.id)
