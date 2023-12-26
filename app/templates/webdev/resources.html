@@ -9,55 +9,76 @@
     <h2>Flexbox</h2>
     <p>Flexbox is a layout mode of CSS3. It is designed for laying out items in a single direction, either horizontally or vertically. It can be used to achieve a lot of different layouts.</p>
     <p>Flexbox is a cornerstone technology of responsive web design as it allows us to create flexible layouts that can adapt to different screen sizes.</p>
-    <img src="{{url_for('static', filename='imgs/justify-content-example.gif')}}" alt="flexbox example" width="50%">
-    <figure>
-        <figcaption>Learn Via Games</figcaption>
-            <ul>
-                <li><a href="https://flexboxfroggy.com/">Flexbox Froggy</a></li>
-                <li><a href="https://mastery.games/flexboxzombies/">Flexbox Zombies</a></li>
-                <li><a href="https://flexboxdefense.com/">Flexbox Defense</a></li>
-            </ul>
-        <figcaption>Guides</figcaption>
-            <ul>
-                <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">A Complete Guide to Flexbox</a></li>
-                <li><a href="https://flexbox.io/">What the Flexbox?!</a></li>
-            </ul>
-        <figcaption>Cheat Sheets</figcaption>
-            <ul>
-                <li><a href="https://yoksel.github.io/flex-cheatsheet/">Flexbox Cheatsheet</a></li>
-            </ul>
-    </figure>
+    <div class="row">
+        <div class="col">
+            <img src="{{url_for('static', filename='imgs/justify-content-example.gif')}}" alt="flexbox example" width="100%">
+        </div>
+        <div class="col">
+            <figure>
+                <figcaption>Learn Via Games</figcaption>
+                    <ul>
+                        <li><a href="https://flexboxfroggy.com/">Flexbox Froggy</a></li>
+                        <li><a href="https://mastery.games/flexboxzombies/">Flexbox Zombies</a></li>
+                        <li><a href="https://flexboxdefense.com/">Flexbox Defense</a></li>
+                    </ul>
+                <figcaption>Guides</figcaption>
+                    <ul>
+                        <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">A Complete Guide to Flexbox</a></li>
+                        <li><a href="https://flexbox.io/">What the Flexbox?!</a></li>
+                    </ul>
+                <figcaption>Cheat Sheets</figcaption>
+                    <ul>
+                        <li><a href="https://yoksel.github.io/flex-cheatsheet/">Flexbox Cheatsheet</a></li>
+                    </ul>
+            </figure>
+        </div>
+    </div>
     <h2>Grid</h2>
     <p>CSS Grid Layout is a two-dimensional layout system for the web. It lets you lay content out in rows and columns, and has many features that make building complex layouts straightforward.</p>
-    <figure>
-        <figcaption>Learn Via Games</figcaption>
+    <figure class="row">
+        <div class="col">
+            <figcaption>Learn Via Games</figcaption>
+                <ul>
+                    <li><a href="https://cssgridgarden.com/">CSS Grid Garden</a></li>
+                </ul>
+        </div>
+        <div class="col">
+            <figcaption>Guides</figcaption>
             <ul>
-                <li><a href="https://cssgridgarden.com/">CSS Grid Garden</a></li>
+                <li><a href="https://css-tricks.com/snippets/css/complete-guide-grid/">A Complete Guide to Grid</a></li>
+                <li><a href="https://www.freecodecamp.org/news/the-css-handbook-a-handy-guide-to-css-for-developers-b56695917d11/#css-grid">The CSS Handbook: A Handy Guide to CSS for Developers</a></li>
             </ul>
-        <figcaption>Guides</figcaption>
-        <ul>
-            <li><a href="https://css-tricks.com/snippets/css/complete-guide-grid/">A Complete Guide to Grid</a></li>
-            <li><a href="https://www.freecodecamp.org/news/the-css-handbook-a-handy-guide-to-css-for-developers-b56695917d11/#css-grid">The CSS Handbook: A Handy Guide to CSS for Developers</a></li>
-        </ul>
-        <figcaption>Cheat Sheets</figcaption>
-        <ul>
-            <li><a href="https://grid.malven.co/">CSS Grid Cheat Sheet</a></li>
-        </ul>
+        </div>
+        <div class="col">
+            <figcaption>Cheat Sheets</figcaption>
+            <ul>
+                <li><a href="https://grid.malven.co/">CSS Grid Cheat Sheet</a></li>
+            </ul>
+        </div>
     </figure>
     <h2>CSS</h2>
-    <figure>
-        <figcaption>Learning</figcaption>
-        <ul>
-            <li><a href="https://getflywheel.com/layout/css-breakpoints-responsive-design-how-to/">CSS Breakpoints: How to Use Breakpoints</a></li>
-            <li><a href="https://webaim.org/techniques/css/invisiblecontent/">Invisible Content Just for Screen Reader Users</a></li>
-        </ul>
-        <figcaption>Learn Via Games</figcaption>
-        <ul>
-            <li><a href="https://cssbattle.dev/">CSS Battle</a></li>
-            <li><a href="https://flukeout.github.io/">CSS Diner</a></li>
-        </ul>
-        <figcaption>Deep Dives</figcaption>
-        <li><a href="https://ishadeed.com/article/cascade-layers/">The Layers of CSS</a></li>
+    <figure class="row">
+        <div class="col">
+            <figcaption>Learning</figcaption>
+            <ul>
+                <li><a href="https://getflywheel.com/layout/css-breakpoints-responsive-design-how-to/">CSS Breakpoints: How to Use Breakpoints</a></li>
+                <li><a href="https://webaim.org/techniques/css/invisiblecontent/">Invisible Content Just for Screen Reader Users</a></li>
+                <li><a href="https://ishadeed.com/article/defensive-css/">Defensive Coding in CSS</a></li>
+            </ul>
+        </div>
+        <div class="col">
+            <figcaption>Learn Via Games</figcaption>
+            <ul>
+                <li><a href="https://cssbattle.dev/">CSS Battle</a></li>
+                <li><a href="https://flukeout.github.io/">CSS Diner</a></li>
+            </ul>
+        </div>
+        <div class="col">
+            <figcaption>Deep Dives</figcaption>
+            <ul>
+                <li><a href="https://ishadeed.com/article/cascade-layers/">The Layers of CSS</a></li>
+            </ul>
+        </div>
     </figure>
     <h2>Colors</h2>
     <p>Colors are a very important part of web design. They can be used to create contrast, meaning, and emotion. They can also be used to create a sense of unity and cohesion.</p>
@@ -74,20 +95,23 @@
     <h2>Fonts</h2>
     <p>Fonts are a very important part of web design. They can be used to create contrast, meaning, and emotion. They can also be used to create a sense of unity and cohesion.</p>
     <p>It is important you pick fonts that work well together. There are many tools that can help you do this such as premade font pairings or tools to  help match fonts.</p>
-    <figure>
-        <figcaption>Tools</figcaption>
-            <ul>
-                <li><a href="https://fontpair.co/">Font Pair - Find a font pairing</a></li>
-                <li><a href="https://fontjoy.com/">Font Joy - Automatically generate font pairings</a></li>
-                <li><a href="https://fonts.google.com/">Google Fonts - Free fonts</a></li>
-                <li><a href="https://modern-fluid-typography.vercel.app/">Modern Fluid Typography - Generate a fluid typography system for responsive design</a></li>
-            </ul>
+    <figure class="row">
+        <div class="col">
+            <figcaption>Tools</figcaption>
+                <ul>
+                    <li><a href="https://fontpair.co/">Font Pair - Find a font pairing</a></li>
+                    <li><a href="https://fontjoy.com/">Font Joy - Automatically generate font pairings</a></li>
+                    <li><a href="https://fonts.google.com/">Google Fonts - Free fonts</a></li>
+                    <li><a href="https://modern-fluid-typography.vercel.app/">Modern Fluid Typography - Generate a fluid typography system for responsive design</a></li>
+                </ul>
+        </div>
+        <div class="col">
             <figcaption>Deep Dive</figcaption>
             <ul>
                 <li><a href="https://web.mit.edu/jmorzins/www/fonts.html">Web Safe Fonts - Fonts that are available on most devices</a></li>
                 <li><a href="https://artequalswork.com/posts/fluid-type/">Fluid Type - Fluid typography with CSS clamp() and min() and max()</a></li>
             </ul>
-
+        </div>
     </figure>
     <h2>Tools</h2>
     <ul>
