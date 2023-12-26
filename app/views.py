@@ -24,6 +24,12 @@ def home():
   projects = Project.query.all()
   return render_template("index.html", projects=projects)
 
+# Web Dev Resource Page
+# Shows the web dev resource page
+@app.route("/web_dev_resources", methods=["GET"])
+def web_dev_resources():
+    return render_template("webdev/resources.html")
+
 # Student Detail Page
 # Shows the student details and projects for a student
 # Public Page

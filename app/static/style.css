@@ -33,3 +33,10 @@ tr:nth-child(even) {
     line-height: 1; /* Adjust line-height as needed */
     border-radius: 3px; /* Adjust border-radius as needed */
 }
+
+figcaption {
+    font-size: 01.2em;
+    color: #999;
+    line-height: 1.5;
+    margin-top: 0.8em;
+}
