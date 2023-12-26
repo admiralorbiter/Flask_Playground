@@ -96,6 +96,22 @@ def admin_link_users():
     students = Student.query.all()
     return render_template('admin_link_users.html', users=users, students=students)
 
+# Add Comment to User Page
+# Lets admin add a comment to a user page under the teacher_comment field
+@app.route('/user/<int:id>/add_comment', methods=['POST'])
+@login_required
+def add_teacher_comment(id):
+    if current_user.role.name != 'admin':  # Ensure only admins can add comments
+        return "Access denied", 403
+
+    user = User.query.get_or_404(id)
+    comment = request.form.get('comment')
+
+    user.teacher_comment = comment
+    db.session.commit()
+
+    return redirect(url_for('user_detail', id=id))
+
 ## Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##
 # Login Page
 # Currently Defaults to Login into Dev User

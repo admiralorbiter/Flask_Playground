@@ -23,6 +23,7 @@ class User(db.Model):
     student = db.relationship('Student', back_populates='user', uselist=False)
     priority_task_id = db.Column(db.Integer, db.ForeignKey('task.task_id'))
     priority_task = db.relationship('Task', backref='assigned_user', lazy='joined', foreign_keys=[priority_task_id])
+    teacher_comment = db.Column(db.Text)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
