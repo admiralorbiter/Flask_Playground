@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Assignment Manager{% endblock %}
+
+{% block content %}
+<div class="assignment-manager">
+    <h1>Assignment Manager</h1>
+    <a href="{{ url_for('create_assignment') }}" class="btn btn-success">Create New Assignment</a>
+
+    <div class="assignments-list">
+        {% for assignment in assignments %}
+        <div class="assignment" id="assignment-{{ assignment.assignment_id }}">
+            <h2>{{ assignment.title }}</h2>
+            <p>{{ assignment.description }}</p>
+            <!-- More details can be added here -->
+            
+            {% if current_user.is_admin %}
+            <a href="{{ url_for('update_assignment', assignment_id=assignment.assignment_id) }}" class="btn btn-primary">Edit</a>
+            <form hx-post="{{ url_for('delete_assignment', assignment_id=assignment.assignment_id) }}" hx-confirm="Are you sure?" hx-target="#assignment-{{ assignment.assignment_id }}" hx-swap="outerHTML">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

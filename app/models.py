@@ -142,6 +142,20 @@ class Task(db.Model):
     # Relationship with links
     links = db.relationship('Link', back_populates='task', cascade="all, delete-orphan")
 
+class Assignment(db.Model):
+    assignment_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    due_date = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+
+    # Foreign key to link assignment to a specific course
+    course_id = db.Column(db.Integer, db.ForeignKey('course.course_id'))
+    
+    # Relationship to link back to the course
+    course = db.relationship('Course', backref=db.backref('assignments', lazy=True))
+
 class Course(db.Model):
     course_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)

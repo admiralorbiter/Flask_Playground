@@ -1,6 +1,6 @@
 from app import app, db
 from flask import Response, render_template, request, redirect, url_for, flash, session
-from app.models import Student, Project, Task, Link, project_students, Comment, User, Course
+from app.models import Student, Project, Task, Link, project_students, Comment, User, Course, Assignment
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -806,6 +806,67 @@ def delete_course(course_id):
         return "Access denied", 403
     course = Course.query.get_or_404(course_id)
     db.session.delete(course)
+    db.session.commit()
+    return ""
+
+## Assignment Routes ##  Assignment Routes ##  Assignment Routes ##  Assignment Routes ##  Assignment Routes ##  Assignment Routes ##
+# Assignment Page
+# Shows the assignment page
+@app.route('/assignment/<int:assignment_id>', methods=['GET'])
+def assignment(assignment_id):
+    assignment=Assignment.query.get_or_404(assignment_id)
+    return render_template('assignment.html', assignment=assignment)
+
+# Assignment Manager Page
+# Shows the assignment manager page
+@app.route('/assignment_manager', methods=['GET'])
+@login_required
+def assignment_manager():
+    if not current_user.is_admin:
+        return "Access denied", 403
+    assignments = Assignment.query.all()
+    return render_template('assignment_manager.html', assignments=assignments)
+
+# Create Assignment Page
+# Allows a user to create a new assignment
+@app.route('/create_assignment', methods=['GET', 'POST'])
+@login_required
+def create_assignment():
+    if not current_user.is_admin:
+        return "Access denied", 403
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        new_assignment = Assignment(title=title, description=description)
+        db.session.add(new_assignment)
+        db.session.commit()
+        return redirect(url_for('assignment_manager'))
+    return render_template('create_assignment.html')
+
+# Update Assignment
+# Updates a assignment based on the assignment_id
+@app.route('/update_assignment/<int:assignment_id>', methods=['GET', 'POST'])
+@login_required
+def update_assignment(assignment_id):
+    if not current_user.is_admin:
+        return "Access denied", 403
+    assignment = Assignment.query.get_or_404(assignment_id)
+    if request.method == 'POST':
+        assignment.title = request.form['title']
+        assignment.description = request.form['description']
+        db.session.commit()
+        return redirect(url_for('assignment_manager'))
+    return render_template('update_assignment.html', assignment=assignment)
+
+# Delete Assignment
+# Deletes a assignment based on the assignment_id
+@app.route('/delete_assignment/<int:assignment_id>', methods=['POST'])
+@login_required
+def delete_assignment(assignment_id):
+    if not current_user.is_admin:
+        return "Access denied", 403
+    assignment = Assignment.query.get_or_404(assignment_id)
+    db.session.delete(assignment)
     db.session.commit()
     return ""
 
