@@ -6,14 +6,22 @@
 <div class="assignment-details" id="assignment-{{ assignment.assignment_id }}">
     <h1>{{ assignment.title }}</h1>
     <p>{{ assignment.description }}</p>
-    <!-- Include other details like due date, submission status, etc. -->
-
-    <!-- Update and Delete Buttons for admins -->
+    <p>{{ assignment.description }}</p>
+    <!-- More details can be added here -->
+    <p>Due: {{ assignment.due_date }}</p>
+    <p>Course: {{ assignment.course.name }}</p>
+    
     {% if current_user.is_admin %}
-    <a href="{{ url_for('update_assignment', assignment_id=assignment.assignment_id) }}" class="btn btn-primary">Edit</a>
-    <form hx-post="{{ url_for('delete_assignment', assignment_id=assignment.assignment_id) }}" hx-confirm="Are you sure?" hx-target="#assignment-{{ assignment.assignment_id }}" hx-swap="outerHTML">
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
+    <div class="row">
+        <div class="col-1">
+            <a href="{{ url_for('update_assignment', assignment_id=assignment.assignment_id) }}" class="btn btn-sm btn-primary">Edit</a>
+        </div>
+        <div class="col-1">
+            <form hx-post="{{ url_for('delete_assignment', assignment_id=assignment.assignment_id) }}" hx-confirm="Are you sure?" hx-target="#assignment-{{ assignment.assignment_id }}" hx-swap="outerHTML">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

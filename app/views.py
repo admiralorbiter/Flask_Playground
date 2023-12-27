@@ -838,11 +838,15 @@ def create_assignment():
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
-        new_assignment = Assignment(title=title, description=description)
+        due_date_str = request.form['due_date']
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        course_id = request.form['course']
+        new_assignment = Assignment(title=title, description=description, due_date=due_date, course_id=course_id)
         db.session.add(new_assignment)
         db.session.commit()
         return redirect(url_for('assignment_manager'))
-    return render_template('create_assignment.html')
+    courses = Course.query.all()
+    return render_template('create_assignment.html', courses=courses)
 
 # Update Assignment
 # Updates a assignment based on the assignment_id

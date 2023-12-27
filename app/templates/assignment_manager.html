@@ -10,9 +10,12 @@
     <div class="assignments-list">
         {% for assignment in assignments %}
         <div class="assignment" id="assignment-{{ assignment.assignment_id }}">
+            <!-- Code below linked to assignment.html -->
             <h2>{{ assignment.title }}</h2>
             <p>{{ assignment.description }}</p>
             <!-- More details can be added here -->
+            <p>Due: {{ assignment.due_date }}</p>
+            <p>Course: {{ assignment.course.name }}</p>
             
             {% if current_user.is_admin %}
             <div class="row">
