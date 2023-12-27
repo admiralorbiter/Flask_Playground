@@ -14,7 +14,16 @@
             <label for="description">Course Description:</label>
             <textarea id="description" name="description" class="form-control" rows="4" required>{{ course.description }}</textarea>
         </div>
-        <!-- Add more input fields as needed -->
+        <!-- Corrected form group for Subject -->
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" class="form-control" required>
+        </div>
+        <!-- Corrected form group for Due Date -->
+        <div class="form-group">
+            <label for="due_date">Due Date:</label>
+            <input type="date" id="due_date" name="due_date" class="form-control" required>
+        </div>
         <button type="submit" class="btn btn-primary">Update Course</button>
         <a href="{{ url_for('course_manager') }}" class="btn btn-secondary">Cancel</a>
     </form>

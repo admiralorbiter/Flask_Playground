@@ -777,7 +777,10 @@ def create_course():
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
-        new_course = Course(name=name, description=description)
+        subject = request.form['subject']
+        due_date_str = request.form['due_date']
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        new_course = Course(name=name, description=description, subject=subject, due_date=due_date)
         db.session.add(new_course)
         db.session.commit()
         return redirect(url_for('course_manager'))
@@ -794,6 +797,10 @@ def update_course(course_id):
     if request.method == 'POST':
         course.name = request.form['name']
         course.description = request.form['description']
+        course.subject = request.form['subject']
+        due_date_str = request.form['due_date']
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        course.due_date = due_date
         db.session.commit()
         return redirect(url_for('course_manager'))
     return render_template('update_course.html', course=course)
