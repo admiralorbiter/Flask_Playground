@@ -1,4 +1,4 @@
-{% extends "base.html" %} 
+<div class="accordion" id="cssAccordion">{% extends "base.html" %} 
 {% block title %}
     Resources
 {% endblock %}
@@ -9,75 +9,164 @@
     <h2>Flexbox</h2>
     <p>Flexbox is a layout mode of CSS3. It is designed for laying out items in a single direction, either horizontally or vertically. It can be used to achieve a lot of different layouts.</p>
     <p>Flexbox is a cornerstone technology of responsive web design as it allows us to create flexible layouts that can adapt to different screen sizes.</p>
-    <div class="row">
+    <figure class="row">
         <div class="col">
             <img src="{{url_for('static', filename='imgs/justify-content-example.gif')}}" alt="flexbox example" width="100%">
         </div>
-        <div class="col">
-            <figure>
-                <figcaption>Learn Via Games</figcaption>
-                    <ul>
-                        <li><a href="https://flexboxfroggy.com/">Flexbox Froggy</a></li>
-                        <li><a href="https://mastery.games/flexboxzombies/">Flexbox Zombies</a></li>
-                        <li><a href="https://flexboxdefense.com/">Flexbox Defense</a></li>
-                    </ul>
-                <figcaption>Guides</figcaption>
-                    <ul>
-                        <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">A Complete Guide to Flexbox</a></li>
-                        <li><a href="https://flexbox.io/">What the Flexbox?!</a></li>
-                    </ul>
-                <figcaption>Cheat Sheets</figcaption>
-                    <ul>
-                        <li><a href="https://yoksel.github.io/flex-cheatsheet/">Flexbox Cheatsheet</a></li>
-                    </ul>
-            </figure>
+        <div class="col accordion" id="css_accordion">
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingLearnViaGames">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLearnViaGamesOne" aria-expanded="false" aria-controls="collapseLearnViaGamesOne">           
+                        Learn Via Games        
+                    </button>    
+                </h2>
+                <div id="collapseLearnViaGamesOne" class="accordion-collapse collapse" aria-labelledby="headingLearnViaGames">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://flexboxfroggy.com/">Flexbox Froggy</a></li>
+                            <li><a href="https://mastery.games/flexboxzombies/">Flexbox Zombies</a></li>
+                            <li><a href="https://flexboxdefense.com/">Flexbox Defense</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingGuides">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGuidesOne" aria-expanded="false" aria-controls="collapseGuidesOne">
+                        Guides        
+                    </button>    
+                </h2>    
+                <div id="collapseGuidesOne" class="accordion-collapse collapse" aria-labelledby="headingGuides">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">A Complete Guide to Flexbox</a></li>
+                            <li><a href="https://flexbox.io/">What the Flexbox?!</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingCheatSheets">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCheatSheetsOne" aria-expanded="false" aria-controls="collapseCheatSheetsOne">
+                        Cheat Sheets       
+                    </button>    
+                </h2>    
+                <div id="collapseCheatSheetsOne" class="accordion-collapse collapse" aria-labelledby="headingCheatSheets">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://yoksel.github.io/flex-cheatsheet/">Flexbox Cheatsheet</a></li>
+                        </ul>        
+                        </div>    
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </figure>
     <h2>Grid</h2>
     <p>CSS Grid Layout is a two-dimensional layout system for the web. It lets you lay content out in rows and columns, and has many features that make building complex layouts straightforward.</p>
     <figure class="row">
         <div class="col">
-            <figcaption>Learn Via Games</figcaption>
-                <ul>
-                    <li><a href="https://cssgridgarden.com/">CSS Grid Garden</a></li>
-                </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingLearnViaGames">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLearnViaGamesTwo" aria-expanded="false" aria-controls="collapseLearnViaGamesTwo">
+                        Learn Via Games        
+                    </button>    
+                </h2>    
+                <div id="collapseLearnViaGamesTwo" class="accordion-collapse collapse" aria-labelledby="headingLearnViaGames">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://cssgridgarden.com/">CSS Grid Garden</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
         </div>
         <div class="col">
-            <figcaption>Guides</figcaption>
-            <ul>
-                <li><a href="https://css-tricks.com/snippets/css/complete-guide-grid/">A Complete Guide to Grid</a></li>
-                <li><a href="https://www.freecodecamp.org/news/the-css-handbook-a-handy-guide-to-css-for-developers-b56695917d11/#css-grid">The CSS Handbook: A Handy Guide to CSS for Developers</a></li>
-            </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingGuides">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGuidesTwo" aria-expanded="false" aria-controls="collapseGuidesTwo">            
+                        Guides        
+                    </button>    
+                </h2>    
+                <div id="collapseGuidesTwo" class="accordion-collapse collapse" aria-labelledby="headingGuides">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://css-tricks.com/snippets/css/complete-guide-grid/">A Complete Guide to Grid</a></li>
+                            <li><a href="https://www.freecodecamp.org/news/the-css-handbook-a-handy-guide-to-css-for-developers-b56695917d11/#css-grid">The CSS Handbook: A Handy Guide to CSS for Developers</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
         </div>
         <div class="col">
-            <figcaption>Cheat Sheets</figcaption>
-            <ul>
-                <li><a href="https://grid.malven.co/">CSS Grid Cheat Sheet</a></li>
-            </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingCheatSheets">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCheatSheetsTwo" aria-expanded="false" aria-controls="collapseCheatSheetsTwo">            
+                        Cheat Sheets        
+                    </button>    
+                </h2>    
+                <div id="collapseCheatSheetsTwo" class="accordion-collapse collapse" aria-labelledby="headingCheatSheetsThree">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://grid.malven.co/">CSS Grid Cheat Sheet</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
         </div>
     </figure>
     <h2>CSS</h2>
     <figure class="row">
         <div class="col">
-            <figcaption>Learning</figcaption>
-            <ul>
-                <li><a href="https://getflywheel.com/layout/css-breakpoints-responsive-design-how-to/">CSS Breakpoints: How to Use Breakpoints</a></li>
-                <li><a href="https://webaim.org/techniques/css/invisiblecontent/">Invisible Content Just for Screen Reader Users</a></li>
-                <li><a href="https://ishadeed.com/article/defensive-css/">Defensive Coding in CSS</a></li>
-            </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingLearning">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLearningThree" aria-expanded="false" aria-controls="collapseLearningThree">            
+                        Learning        
+                    </button>    
+                </h2>   
+                <div id="collapseLearningThree" class="accordion-collapse collapse" aria-labelledby="headingLearning">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://getflywheel.com/layout/css-breakpoints-responsive-design-how-to/">CSS Breakpoints: How to Use Breakpoints</a></li>
+                            <li><a href="https://webaim.org/techniques/css/invisiblecontent/">Invisible Content Just for Screen Reader Users</a></li>
+                            <li><a href="https://ishadeed.com/article/defensive-css/">Defensive Coding in CSS</a></li>
+                        </ul>        
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col">
-            <figcaption>Learn Via Games</figcaption>
-            <ul>
-                <li><a href="https://cssbattle.dev/">CSS Battle</a></li>
-                <li><a href="https://flukeout.github.io/">CSS Diner</a></li>
-            </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingLearnViaGames">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLearnViaGamesThree" aria-expanded="false" aria-controls="collapseLearnViaGamesThree">
+                        Learn Via Games        
+                    </button>    
+                </h2>    
+                <div id="collapseLearnViaGamesThree" class="accordion-collapse collapse" aria-labelledby="headingLearnViaGames">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://cssbattle.dev/">CSS Battle</a></li>
+                            <li><a href="https://flukeout.github.io/">CSS Diner</a></li>
+                        </ul>        
+                    </div> 
+                </div>   
+            </div>
         </div>
         <div class="col">
-            <figcaption>Deep Dives</figcaption>
-            <ul>
-                <li><a href="https://ishadeed.com/article/cascade-layers/">The Layers of CSS</a></li>
-            </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingDeepDives">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDeepDivesThree" aria-expanded="false" aria-controls="collapseDeepDivesThree">            
+                        Deep Dives        
+                    </button>    
+                </h2>    
+                <div id="collapseDeepDivesThree" class="accordion-collapse collapse" aria-labelledby="headingDeepDives">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://ishadeed.com/article/cascade-layers/">The Layers of CSS</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
         </div>
     </figure>
     <h2>Colors</h2>
@@ -85,32 +174,62 @@
     <p>It is important you pick colors that work well together. There are many tools that can help you do this such as premade color palettes or tools to  help match colors.</p>
     <p>In web development, colors are specified using CSS and HTML to style and design web pages. The most common methods for defining colors are Hexadecimal (Hex) codes, RGB (Red, Green, Blue) values, RGBA (with Alpha for transparency), and predefined color names. Hex codes, beginning with a hash (#), provide a six-digit representation of color intensity for red, green, and blue components, such as #FF5733. RGB and RGBA functions use decimal values (0-255) to represent the intensity of red, green, and blue, with RGBA adding an alpha channel for transparency, like rgba(255, 87, 51, 0.5). These color values are used in CSS to set properties like background-color, color, border-color, and more, applying visual styles directly to HTML elements or classes. The choice between Hex, RGB, or color names often depends on developer preference, project standards, or specific requirements like transparency. Proper use of color values is crucial for creating visually cohesive and accessible designs in web development.</p>
     <figure>
-        <figcaption>Tools</figcaption>
-            <ul>
-                <li><a href="https://baseline.is/tools/color-wheel/">Color Wheel - Find a palette based on primary color</a></li>
-                <li><a href="https://coolors.co/">Coolors - Automatically generate palettes</a></li>
-                <li><a href="https://colorhunt.co/">Color Hunt - See what other designers are using</a></li>
-            </ul>
+        <div class="accordion-item">    
+            <h2 class="accordion-header" id="headingTools">        
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolsFour" aria-expanded="false" aria-controls="collapseToolsFour">            
+                    Tools        
+                </button>    
+            </h2>    
+            <div id="collapseToolsFour" class="accordion-collapse collapse" aria-labelledby="headingTools">        
+                <div class="accordion-body">            
+                    <ul>
+                        <li><a href="https://baseline.is/tools/color-wheel/">Color Wheel - Find a palette based on primary color</a></li>
+                        <li><a href="https://coolors.co/">Coolors - Automatically generate palettes</a></li>
+                        <li><a href="https://colorhunt.co/">Color Hunt - See what other designers are using</a></li>
+                    </ul>        
+                </div>    
+            </div>
+        </div>
     </figure>
     <h2>Fonts</h2>
     <p>Fonts are a very important part of web design. They can be used to create contrast, meaning, and emotion. They can also be used to create a sense of unity and cohesion.</p>
     <p>It is important you pick fonts that work well together. There are many tools that can help you do this such as premade font pairings or tools to  help match fonts.</p>
     <figure class="row">
         <div class="col">
-            <figcaption>Tools</figcaption>
-                <ul>
-                    <li><a href="https://fontpair.co/">Font Pair - Find a font pairing</a></li>
-                    <li><a href="https://fontjoy.com/">Font Joy - Automatically generate font pairings</a></li>
-                    <li><a href="https://fonts.google.com/">Google Fonts - Free fonts</a></li>
-                    <li><a href="https://modern-fluid-typography.vercel.app/">Modern Fluid Typography - Generate a fluid typography system for responsive design</a></li>
-                </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingTools">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolsFive" aria-expanded="false" aria-controls="collapseToolsFive">            
+                        Tools        
+                    </button>    
+                </h2>    
+                <div id="collapseToolsFive" class="accordion-collapse collapse" aria-labelledby="headingTools">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://fontpair.co/">Font Pair - Find a font pairing</a></li>
+                            <li><a href="https://fontjoy.com/">Font Joy - Automatically generate font pairings</a></li>
+                            <li><a href="https://fonts.google.com/">Google Fonts - Free fonts</a></li>
+                            <li><a href="https://modern-fluid-typography.vercel.app/">Modern Fluid Typography - Generate a fluid typography system for responsive design</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
         </div>
         <div class="col">
-            <figcaption>Deep Dive</figcaption>
-            <ul>
-                <li><a href="https://web.mit.edu/jmorzins/www/fonts.html">Web Safe Fonts - Fonts that are available on most devices</a></li>
-                <li><a href="https://artequalswork.com/posts/fluid-type/">Fluid Type - Fluid typography with CSS clamp() and min() and max()</a></li>
-            </ul>
+            <div class="accordion-item">    
+                <h2 class="accordion-header" id="headingDeepDive">        
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDeepDiveFive" aria-expanded="false" aria-controls="collapseDeepDiveFive">            
+                        Deep Dive        
+                    </button>    
+                </h2>    
+                <div id="collapseDeepDiveFive" class="accordion-collapse collapse" aria-labelledby="headingDeepDive">        
+                    <div class="accordion-body">            
+                        <ul>
+                            <li><a href="https://web.mit.edu/jmorzins/www/fonts.html">Web Safe Fonts - Fonts that are available on most devices</a></li>
+                            <li><a href="https://artequalswork.com/posts/fluid-type/">Fluid Type - Fluid typography with CSS clamp() and min() and max()</a></li>
+                        </ul>        
+                    </div>    
+                </div>
+            </div>
         </div>
     </figure>
     <h2>Tools</h2>
@@ -120,16 +239,27 @@
         <li><a href="https://www.patterns.dev/resources/">Patterns - Community Code Patterns for Complex Applications</a></li>
     </ul>
     <figure>
-        <figcaption>Themes</figcaption>
-        <ul>
-            <li><a href="https://html5up.net/">HTML5 UP - Free responsive HTML5 and CSS3 site templates</a></li>
-            <li><a href="https://picocss.com/">Pico - A stupidly simple, blazing fast, tiny (< 1kb) CSS framework</a></li>
-            <li><a href="https://technext.github.io/100-template-bundle/">100 Template Bundle - Free templates</a></li>
-            <li><a href="https://themeforest.net/">Theme Forest - Paid themes</a></li>
-        </ul>
+        <div class="accordion-item">    
+            <h2 class="accordion-header" id="headingThemes">        
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThemesSix" aria-expanded="false" aria-controls="collapseThemesSix">            
+                    Themes        
+                </button>    
+            </h2>    
+            <div id="collapseThemesSix" class="accordion-collapse collapse" aria-labelledby="headingThemes">        
+                <div class="accordion-body">            
+                    <ul>
+                        <li><a href="https://html5up.net/">HTML5 UP - Free responsive HTML5 and CSS3 site templates</a></li>
+                        <li><a href="https://picocss.com/">Pico - A stupidly simple, blazing fast, tiny (< 1kb) CSS framework</a></li>
+                        <li><a href="https://technext.github.io/100-template-bundle/">100 Template Bundle - Free templates</a></li>
+                        <li><a href="https://themeforest.net/">Theme Forest - Paid themes</a></li>
+                    </ul>        
+                </div>    
+            </div>
+        </div>
     </figure>
     <h2>JavaScript</h2>
     <ul>
         <li><a href="https://vanillajsguides.com/">Vanilla JS Guides - Learn JavaScript</a></li>
     </ul>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}</div>
