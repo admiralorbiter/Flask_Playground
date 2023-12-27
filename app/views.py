@@ -1,6 +1,6 @@
 from app import app, db
 from flask import Response, render_template, request, redirect, url_for, flash, session
-from app.models import Student, Project, Task, Link, project_students, Comment, User
+from app.models import Student, Project, Task, Link, project_students, Comment, User, Course
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -747,3 +747,65 @@ def ask():
     # Combine the chat response and the script to clear the input field
     combined_response = chat_response + clear_input_script
     return combined_response
+
+## Course Routes ##  Course Routes ##  Course Routes ##  Course Routes ##  Course Routes ##  Course Routes ##
+# Course Page
+# Shows the course page
+@app.route('/course/<int:course_id>', methods=['GET'])
+def course(course_id):
+    course=Course.query.get_or_404(course_id)
+    return render_template('course.html', course=course)
+
+# Course Manager Page
+# Shows the course manager page
+@app.route('/course_manager', methods=['GET'])
+@login_required
+def course_manager():
+    if not current_user.is_admin:
+        return "Access denied", 403
+    courses = Course.query.all()
+    return render_template('course_manager.html', courses=courses)
+
+# Create Course Page
+# Allows a user to create a new course
+@app.route('/create_course', methods=['GET', 'POST'])
+@login_required
+def create_course():
+    if not current_user.is_admin:
+        return "Access denied", 403
+    if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        new_course = Course(name=name, description=description)
+        db.session.add(new_course)
+        db.session.commit()
+        return redirect(url_for('course_manager'))
+    return render_template('create_course.html')
+
+# Update Course
+# Updates a course based on the course_id
+@app.route('/update_course/<int:course_id>', methods=['GET', 'POST'])
+@login_required
+def update_course(course_id):
+    if not current_user.is_admin:
+        return "Access denied", 403
+    course = Course.query.get_or_404(course_id)
+    if request.method == 'POST':
+        course.name = request.form['name']
+        course.description = request.form['description']
+        db.session.commit()
+        return redirect(url_for('course_manager'))
+    return render_template('update_course.html', course=course)
+
+# Delete Course
+# Deletes a course based on the course_id
+@app.route('/delete_course/<int:course_id>', methods=['POST'])
+@login_required
+def delete_course(course_id):
+    if not current_user.is_admin:
+        return "Access denied", 403
+    course = Course.query.get_or_404(course_id)
+    db.session.delete(course)
+    db.session.commit()
+    return ""
+

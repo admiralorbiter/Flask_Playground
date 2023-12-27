@@ -141,3 +141,12 @@ class Task(db.Model):
 
     # Relationship with links
     links = db.relationship('Link', back_populates='task', cascade="all, delete-orphan")
+
+class Course(db.Model):
+    course_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.Text)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    subject = db.Column(db.String)
+    due_date = db.Column(db.DateTime)
+    related_courses = db.Column(db.String)
