@@ -853,15 +853,21 @@ def create_assignment():
 @app.route('/update_assignment/<int:assignment_id>', methods=['GET', 'POST'])
 @login_required
 def update_assignment(assignment_id):
+    print(request.form)
     if not current_user.is_admin:
         return "Access denied", 403
     assignment = Assignment.query.get_or_404(assignment_id)
     if request.method == 'POST':
         assignment.title = request.form['title']
         assignment.description = request.form['description']
+        due_date_str = request.form['due_date']
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        assignment.due_date = due_date
+        assignment.course_id = request.form['course_id']
         db.session.commit()
         return redirect(url_for('assignment_manager'))
-    return render_template('update_assignment.html', assignment=assignment)
+    courses = Course.query.all()
+    return render_template('update_assignment.html', assignment=assignment, courses=courses)
 
 # Delete Assignment
 # Deletes a assignment based on the assignment_id
