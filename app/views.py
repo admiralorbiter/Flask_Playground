@@ -38,18 +38,6 @@ def student_detail(id):
     student = Student.query.get_or_404(id)
     return render_template("student_details.html", student=student)
 
-# User Detail Page
-# Shows the user details and projects for a user
-# Private Page
-@app.route("/user/<int:id>", methods=["GET"])
-@login_required
-def user_detail(id):
-    # Checks to see if the user is the admin or the user is the owner of the page
-    if not current_user.id == id and not current_user.role.name == 'admin':
-        return "Access denied", 403
-    user = User.query.get_or_404(id)
-    return render_template("user_details.html", user=user)
-
 ## Project Manager
 # Project Manager Page
 # Shows all projects in the database, Public Page
@@ -102,6 +90,63 @@ def admin_link_users():
     students = Student.query.all()
     return render_template('admin_link_users.html', users=users, students=students)
 
+## User Routes ##  User Routes ##  User Routes ##  User Routes ##  User Routes ##  User Routes ##
+# Create User Page
+# Allows Admin to create a new user
+@app.route('/create_user', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    # Checks admin, Only admin can create users
+    if not current_user.role.name == 'admin': 
+        return "Access denied", 403
+
+    # if post request, gather data from form and create user
+    if request.method == 'POST':
+        # Form Data
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        role = request.form['role']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+
+        # Function to add a student to the project
+        def add_student(first_name, last_name):
+            student = Student(first_name=first_name.strip(), last_name=last_name.strip())
+            student.user_id = user.id
+            student.user=user
+            db.session.add(student)
+            db.session.flush()  # Ensure the student gets an ID if it's a new entry
+            return student
+
+        # Create new user and set password
+        user = User(username=username)
+        user.set_password(password)
+        user.email = email
+        user.role_id = role
+        # user.role.name=role
+        student=add_student(first_name, last_name)
+        user.student=student
+        db.session.add(user)
+        db.session.commit()
+
+        # Redirect to login page after successful signup
+        return redirect(url_for('login'))
+
+    return render_template('create_user.html')
+
+# User Detail Page
+# Shows the user details and projects for a user
+# Private Page
+@app.route("/user/<int:id>", methods=["GET"])
+@login_required
+def user_detail(id):
+    # Checks to see if the user is the admin or the user is the owner of the page
+    if not current_user.id == id and not current_user.role.name == 'admin':
+        return "Access denied", 403
+    user = User.query.get_or_404(id)
+    return render_template("user_details.html", user=user)
+
 # Add Comment to User Page
 # Lets admin add a comment to a user page under the teacher_comment field
 @app.route('/user/<int:id>/add_comment', methods=['POST'])
@@ -146,50 +191,6 @@ def login():
             next_page = url_for('home')
         return redirect(next_page)
     return render_template('login.html')
-
-# Create User Page
-# Allows Admin to create a new user
-@app.route('/create_user', methods=['GET', 'POST'])
-@login_required
-def create_user():
-    # Checks admin, Only admin can create users
-    if not current_user.role.name == 'admin': 
-        return "Access denied", 403
-
-    # if post request, gather data from form and create user
-    if request.method == 'POST':
-        # Form Data
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        role = request.form['role']
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-
-        # Function to add a student to the project
-        def add_student(first_name, last_name):
-            student = Student(first_name=first_name.strip(), last_name=last_name.strip())
-            student.user_id = user.id
-            student.user=user
-            db.session.add(student)
-            db.session.flush()  # Ensure the student gets an ID if it's a new entry
-            return student
-
-        # Create new user and set password
-        user = User(username=username)
-        user.set_password(password)
-        user.email = email
-        user.role_id = role
-        # user.role.name=role
-        student=add_student(first_name, last_name)
-        user.student=student
-        db.session.add(user)
-        db.session.commit()
-
-        # Redirect to login page after successful signup
-        return redirect(url_for('login'))
-
-    return render_template('create_user.html')
 
 # Signup Page
 # Allows a user to signup for an account - Currently not in use as I want to limit sign ups to admin and my students
