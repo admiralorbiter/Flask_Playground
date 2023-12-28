@@ -1,5 +1,5 @@
 from app import app, db
-from flask import Response, render_template, request, redirect, url_for, flash, session
+from flask import Response, render_template, request, redirect, url_for, flash, session, render_template_string
 from app.models import Student, Project, Task, Link, project_students, Comment, User, Course, Assignment
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
@@ -93,7 +93,7 @@ def admin_link_users():
 ## User Routes ##  User Routes ##  User Routes ##  User Routes ##  User Routes ##  User Routes ##
 # Create User Page
 # Allows Admin to create a new user
-@app.route('/create_user', methods=['GET', 'POST'])
+@app.route('/create_user', methods=['POST'])
 @login_required
 def create_user():
     # Checks admin, Only admin can create users
@@ -106,35 +106,44 @@ def create_user():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        role = request.form['role']
+        role_id = request.form['role']  # Assuming role is the ID, not name
         first_name = request.form['first_name']
         last_name = request.form['last_name']
 
-        # Function to add a student to the project
-        def add_student(first_name, last_name):
-            student = Student(first_name=first_name.strip(), last_name=last_name.strip())
-            student.user_id = user.id
-            student.user=user
-            db.session.add(student)
-            db.session.flush()  # Ensure the student gets an ID if it's a new entry
-            return student
+        # Add additional logic to check if the user already exists, etc.
 
         # Create new user and set password
         user = User(username=username)
         user.set_password(password)
         user.email = email
-        user.role_id = role
-        # user.role.name=role
-        student=add_student(first_name, last_name)
-        user.student=student
+        user.role_id = role_id
+
+        # Add student linked to the user
+        student = Student(first_name=first_name.strip(), last_name=last_name.strip(), user=user)
+        db.session.add(student)
         db.session.add(user)
         db.session.commit()
 
-        # Redirect to login page after successful signup
-        return redirect(url_for('login'))
+        # Use render_template_string to render the HTML with the user data
+        user_html = render_template_string("""
+        <tr id="user-{{ user.id }}">
+            <td>{{ user.username }}</td>
+            <td>{{ user.role.name }}</td>
+            <td><a href="{{ url_for('user_detail', id=user.id) }}">Link</a></td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.student.first_name }} {{ user.student.last_name }}</td>
+            <td>
+                <ul>
+                    {% for project in user.student.projects %}
+                    <li>{{ project.name }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        """, user=user)
 
-    return render_template('create_user.html')
-
+        return user_html
+    
 # User Detail Page
 # Shows the user details and projects for a user
 # Private Page
