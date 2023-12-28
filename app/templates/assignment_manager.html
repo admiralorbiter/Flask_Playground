@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="assignment-manager">
-    <h1>Assignment Manager</h1>
+    <h2>Assignment Manager</h2>
     <a href="{{ url_for('create_assignment') }}" class="btn btn-success">Create New Assignment</a>
 
     <div class="assignments-list">
@@ -38,5 +38,30 @@
         </div>
         {% endfor %}
     </div>
+    <h3>Assign Assignments to Students</h3>
+    <form id="assignForm" hx-post="/assign-assignments" hx-target="#response" hx-swap="outerHTML">
+        <fieldset>
+            <legend>Assign to Students:</legend>
+            {% for student in students %}
+            <div>
+                <input type="checkbox" id="student{{ student.student_id }}" name="students" value="{{ student.student_id }}">
+                <label for="student{{ student.studnet_id }}">{{ student.first_name }}</label>
+            </div>
+            {% endfor %}
+        </fieldset>
+    
+        <!-- Include the assignment selection dropdown here -->
+        <div>
+            <label for="assignmentSelect">Select Assignment:</label>
+            <select id="assignmentSelect" name="assignment">
+                {% for assignment in assignments %}
+                <option value="{{ assignment.assignment_id }}">{{ assignment.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <button type="submit">Assign</button>
+    </form>
+    <div id="response"></div>
 </div>
 {% endblock %}

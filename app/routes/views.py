@@ -1,6 +1,6 @@
 from app import app, db
 from flask import Response, render_template, request, redirect, url_for, flash, session, render_template_string
-from app.models import Student, Project, Task, Link, project_students, Comment, User, Course, Assignment
+from app.models import Student, Project, Task, Link, project_students, Comment, User, Course, Assignment, assignment_students
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -847,7 +847,8 @@ def assignment_manager():
     if not current_user.is_admin:
         return "Access denied", 403
     assignments = Assignment.query.all()
-    return render_template('assignment_manager.html', assignments=assignments)
+    students = Student.query.all()
+    return render_template('assignment_manager.html', assignments=assignments, students=students)
 
 # Create Assignment Page
 # Allows a user to create a new assignment
@@ -902,3 +903,25 @@ def delete_assignment(assignment_id):
     db.session.commit()
     return ""
 
+# Assign Assignments
+# Allows admin to assign assignments to students
+@app.route('/assign-assignments', methods=['POST'])
+def assign_assignments():
+    # Get the selected assignment and student IDs from the form
+    selected_assignment_id = request.form.get('assignment')
+    selected_students_ids = request.form.getlist('students')
+    # Retrieve the assignment object from the database
+    assignment = Assignment.query.get(selected_assignment_id)
+
+    # Loop through the student IDs and create a new record for each in the junction table
+    for student_id in selected_students_ids:
+        # Create a new association object for student and assignment
+        new_association = assignment_students.insert().values(student_id=student_id, assignment_id=assignment.assignment_id)
+        # Execute the insertion
+        db.session.execute(new_association)
+
+    # Commit the session to save the assignments
+    db.session.commit()
+
+    # Redirect or respond with success message
+    return "Assignments successfully assigned!"

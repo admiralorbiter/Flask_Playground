@@ -13,6 +13,11 @@ task_students = db.Table('task_students',
     db.Column('student_id', db.Integer, db.ForeignKey('student.student_id'))
 )
 
+assignment_students = db.Table('assignment_students',
+    db.Column('assignment_id', db.Integer, db.ForeignKey('assignment.assignment_id')),
+    db.Column('student_id', db.Integer, db.ForeignKey('student.student_id'))
+)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
