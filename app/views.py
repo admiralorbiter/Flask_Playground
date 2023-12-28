@@ -172,6 +172,46 @@ def add_teacher_comment(id):
 
     return redirect(url_for('user_detail', id=id))
 
+# Update User
+# Updates a user based on the user_id
+@app.route('/user/update/<int:id>', methods=['GET', 'POST'])
+@login_required
+def update_user(id):
+    # Checks to see if the user is the admin or the user is the owner of the page
+    if not current_user.id == id and not current_user.role.name == 'admin':
+        return "Access denied", 403
+    user = User.query.get_or_404(id)
+    if request.method == 'POST':
+        user.username = request.form['username']
+        user.email = request.form['email']
+        password = request.form['password']
+        if password:
+            user.set_password(password)
+        if user.student:
+            user.student.first_name = request.form['first_name']
+            user.student.last_name = request.form['last_name']
+        db.session.commit()
+        return redirect(url_for('user_detail', id=id))
+    return render_template('update_user.html', user=user)
+
+# Delete User
+# Deletes a user based on the user_id
+@app.route('/user/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_user(id):
+    # Checks to see if the user is the admin
+    if not current_user.role.name == 'admin':
+        return "Access denied", 403
+    user = User.query.get_or_404(id)
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while deleting the user: {e}', 'danger')
+
+    return ""
+
 ## Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##  Auth Routes ##
 # Login Page
 # Currently Defaults to Login into Dev User

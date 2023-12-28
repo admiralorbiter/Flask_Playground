@@ -3,34 +3,29 @@
     {{ user.first_name }}
 {% endblock %}
 {% block content %}
-    {% if current_user.is_admin%}
-        <h1>{{ user.student.first_name }}  {{user.student.last_name}}</h1>
-        <p>{{ user.username }}</p>
-        <div>
-            <strong>Linked Student: </strong> 
+    <h1>{{ user.student.first_name }}  {{user.student.last_name}}</h1>
+    <p>{{ user.username }}</p>
+    <a href="{{ url_for('update_user', id=user.id) }}" class="btn btn-info">Edit User Details</a>
+    <div>
+        <strong>Linked Student: </strong> 
+    </div>
+    <div>
+        <p>Priority Task: {{user.priority_task.name}}</p>
+        <p>{{user.priority_task.description}}</p>
+    </div>
+    <div hx-get="/assign_task/{{ user.id }}" hx-trigger="click" hx-target="#task-form">
+        <button>Assign Priority Task</button>
+    </div>
+    <div id="task-form">
+        <!-- The form from assign_task.html will load here -->
+    </div>
+    <form action="{{ url_for('add_teacher_comment', id=user.id) }}" method="POST">
+        <div class="form-group">
+            <label for="comment">Teacher Comment:</label>
+            <textarea class="form-control" name="comment" id="comment">{{ user.teacher_comment }}</textarea>
         </div>
-        <div>
-            <p>Priority Task: {{user.priority_task.name}}</p>
-            <p>{{user.priority_task.description}}</p>
-        </div>
-    {% endif %}
-    {% if current_user.is_admin %}
-        <div hx-get="/assign_task/{{ user.id }}" hx-trigger="click" hx-target="#task-form">
-            <button>Assign Priority Task</button>
-        </div>
-        <div id="task-form">
-            <!-- The form from assign_task.html will load here -->
-        </div>
-    {% endif %}
-    {% if current_user.role.name == 'admin' %}
-        <form action="{{ url_for('add_teacher_comment', id=user.id) }}" method="POST">
-            <div class="form-group">
-                <label for="comment">Teacher Comment:</label>
-                <textarea class="form-control" name="comment" id="comment">{{ user.teacher_comment }}</textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit Comment</button>
-        </form>
-    {% endif %}
+        <button type="submit" class="btn btn-primary">Submit Comment</button>
+    </form>
     <div>
         <strong>Teacher's Comment:</strong>
         <p>{{ user.teacher_comment or 'No comment provided yet.' }}</p>
