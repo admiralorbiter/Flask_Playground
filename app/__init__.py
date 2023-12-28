@@ -16,8 +16,11 @@ db = SQLAlchemy()
 login = LoginManager(app)
 login.login_view = 'login'
 
-from app import views
+from app.routes import views
 from app import models
+from app.routes.auth import auth
+
+app.register_blueprint(auth)
 
 @login.user_loader
 def load_user(id):
