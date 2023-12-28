@@ -222,6 +222,7 @@ def login():
     if config=='development':
         dev_user = User.query.get(1)  # Assuming user with ID 1 is your dev user
         login_user(dev_user)
+        dev_user.last_login = datetime.utcnow()
         return redirect(url_for('home'))
      
     if current_user.is_authenticated:
@@ -235,6 +236,7 @@ def login():
             return redirect(url_for('login'))
         user.role_id = 'user'
         login_user(user)
+        user.last_login = datetime.utcnow()  # Update last_login to the current time
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('home')
