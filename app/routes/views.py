@@ -846,7 +846,8 @@ def assignment(assignment_id):
 def assignment_student(student_id):
     student=Student.query.get_or_404(student_id)
     assignments = student.assignments
-    return render_template('assignment_student.html', student=student, assignments=assignments)
+    projects = student.projects
+    return render_template('assignment_student.html', student=student, assignments=assignments, projects=projects)
 
 # Assignment Manager Page
 # Shows the assignment manager page

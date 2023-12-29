@@ -17,4 +17,32 @@
 {% else %}
     <p>This student has no assignments.</p>
 {% endif %}
+<h2> Projects </h2>
+{% if projects %}
+    <ul>
+        {% for project in projects %}
+            <li>
+                <p>{{ project.title }} - Due: {{ project.due_date.strftime('%B %d, %Y') }}</p>
+                <p>{{ project.description }}</p>
+            </li>
+            
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>This student has no projects.</p>
+{% endif %}
+<h2> Tasks </h2>
+{% if tasks %}
+    <ul>
+        {% for task in tasks %}
+            <li>
+                <p>{{ task.title }} - Due: {{ task.due_date.strftime('%B %d, %Y') }}</p>
+                <p>{{ task.description }}</p>
+            </li>
+            
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>This student has no tasks.</p>
+{% endif %}
 {% endblock %}
