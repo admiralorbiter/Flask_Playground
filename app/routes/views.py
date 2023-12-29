@@ -839,6 +839,15 @@ def assignment(assignment_id):
     assignment=Assignment.query.get_or_404(assignment_id)
     return render_template('assignment.html', assignment=assignment)
 
+# Assignment Student Page
+# Shows all the assignments for a student
+@app.route('/assignment_student/<int:student_id>', methods=['GET'])
+@login_required
+def assignment_student(student_id):
+    student=Student.query.get_or_404(student_id)
+    assignments = student.assignments
+    return render_template('assignment_student.html', student=student, assignments=assignments)
+
 # Assignment Manager Page
 # Shows the assignment manager page
 @app.route('/assignment_manager', methods=['GET'])

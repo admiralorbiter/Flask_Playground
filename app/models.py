@@ -92,6 +92,8 @@ class Student(db.Model):
     # Relationship for projects where student is the lead
     lead_for_projects = db.relationship('Project', backref=backref('project_lead', lazy=True, uselist=False, overlaps="team_members,participating_students"))
 
+    assignments = db.relationship('Assignment', secondary=assignment_students, 
+                                  backref=db.backref('students', lazy='dynamic'))
 class Link(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String, nullable=False)

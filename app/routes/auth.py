@@ -13,7 +13,8 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     ## Remove this before production, just short way to login
-    config = 'development'
+    # config = 'development'
+    config = 'student_dev'
     if config=='development':
         dev_user = User.query.get(1)  # Assuming user with ID 1 is your dev user
         login_user(dev_user)
