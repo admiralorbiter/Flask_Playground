@@ -22,7 +22,13 @@
     <ul>
         {% for project in projects %}
             <li>
-                <p>{{ project.title }} - Due: {{ project.due_date.strftime('%B %d, %Y') }}</p>
+                <p>{{ project.title }} - Due: 
+                    {% if project.due_date == None %}
+                        No due date
+                    {% else %}
+                    {{ project.due_date.strftime('%B %d, %Y') }}
+                    {% endif %}
+                </p>
                 <p>{{ project.description }}</p>
             </li>
             
