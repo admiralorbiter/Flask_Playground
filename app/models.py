@@ -43,6 +43,8 @@ class User(db.Model):
     
     @property
     def is_admin(self):
+        if self.role is None:
+            return False
         return (self.role.name == 'admin')
 
     @property

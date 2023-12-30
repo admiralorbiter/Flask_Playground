@@ -373,7 +373,7 @@ def update_project_overview(project_id):
 @login_required
 def delete_project(id):
     #Checks to see if the user is the admin
-    if not current_user.role.name == 'admin':
+    if not current_user.is_admin:
         return "Access denied", 403
 
     project = Project.query.get_or_404(id)

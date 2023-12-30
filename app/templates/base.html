@@ -20,6 +20,11 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
               </li>
+              {% if current_user.is_authenticated and not current_user.is_admin %}
+              <li>
+                <a class="nav-link" href="{{ url_for('assignment_student', student_id=current_user.id) }}">Assignments</a>
+              </li>
+              {% endif %}
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('web_dev_resources') }}">Webdev Resources</a>
               </li>
@@ -41,11 +46,6 @@
               </li>
               <li>
                 <a class="nav-link" href="{{ url_for('assignment_manager') }}">Assignment Manager</a>
-              </li>
-              {% endif %}
-              {% if current_user.is_authenticated and not current_user.is_admin %}
-              <li>
-                <a class="nav-link" href="{{ url_for('assignment_student', student_id=current_user.id) }}">Assignments</a>
               </li>
               {% endif %}
             </ul>
