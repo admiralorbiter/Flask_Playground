@@ -422,38 +422,30 @@ def add_task(project_id):
 @login_required
 def update_task(task_id):
     task = Task.query.get_or_404(task_id)
-    project = Project.query.get_or_404(task.project_id)
+    all_students = Student.query.all()  # Fetch all students to list in the form
 
-    # If the request is a GET, return the edit form
     if request.method == "GET":
-        
-        # HTML Response Linked to project_details.html Add New Task Button
-        # This form calls this function again with a POST request to update instead of add_task
-        edit_form_html = f"""
-            <form action="{ url_for('update_task', task_id=task.task_id) }" method="post">
-                <label for="task_name">Task Name:</label>
-                <input type="text" id="task_name" name="task_name" />
+        # Render your form with all students and current task details
+        return render_template('edit_task_form.html', task=task, all_students=all_students)
 
-                <label for="task_description">Description:</label>
-                <input type="text" id="task_description" name="task_description" />
-
-                <button type="submit" class="btn btn-primary">Add Task</button>
-            </form>
-        """
-        return edit_form_html
-
-    # If the request is a POST, update the task
     elif request.method == "POST":
         try:
-            # Update task's attributes based on form data
             task.name = request.form.get("task_name")
             task.description = request.form.get("task_description")
+
+            # Handle student assignment
+            selected_student_ids = request.form.getlist('assigned_students')
+            selected_students = Student.query.filter(Student.student_id.in_(selected_student_ids)).all()
+            
+            # Update the assigned students
+            task.assigned_students = selected_students
+
             db.session.commit()
+            flash('Task updated successfully!', 'success')
         except Exception as e:
             db.session.rollback()
             flash(f'An error occurred while updating the task: {e}', 'danger')
 
-        # After updating the task, redirect to the project detail page
         return redirect(url_for('project_detail', id=task.project_id))
 
 # Delete Task

@@ -193,6 +193,15 @@ endblock %} {% block content %}
           <h4 class="card-title">{{ task.name }}</h4>
           <p class="card-text">{{ task.description }}</p>
           <p class="card-text">Progress: {{ task.progress }}%</p>
+          <p class="card-text">Assigned To: 
+            {% if task.assigned_students %}
+              {% for student in task.assigned_students %}
+                {{ student.first_name }}
+              {% endfor %}
+            {% else %}
+              None
+            {% endif %}
+          </p>
           <!-- Add other task details here -->
           {% if current_user.is_authenticated%}
           <!-- Button to toggle the edit form -->

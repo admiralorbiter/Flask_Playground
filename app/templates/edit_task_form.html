@@ -1,0 +1,20 @@
+<form action="{{ url_for('update_task', task_id=task.task_id) }}" method="post">
+    <!-- Existing fields -->
+    <label for="task_name">Task Name:</label>
+    <input type="text" id="task_name" name="task_name" value="{{ task.name }}" />
+
+    <label for="task_description">Description:</label>
+    <input type="text" id="task_description" name="task_description" value="{{ task.description }}" />
+
+    <!-- Student assignment dropdown -->
+    <label for="assigned_students">Assign Students:</label>
+    <select multiple id="assigned_students" name="assigned_students">
+        {% for student in all_students %}  <!-- 'all_students' should be passed from the Flask view -->
+            <option value="{{ student.student_id }}" {% if student in task.assigned_students %}selected{% endif %}>
+                {{ student.first_name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="btn btn-primary">Update Task</button>
+</form>
