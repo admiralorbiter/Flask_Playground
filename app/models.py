@@ -94,6 +94,9 @@ class Student(db.Model):
 
     assignments = db.relationship('Assignment', secondary=assignment_students, 
                                   backref=db.backref('students', lazy='dynamic'))
+    
+    tasks = db.relationship('Task', secondary=task_students,
+                            backref=db.backref('students', lazy='dynamic'))
 class Link(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String, nullable=False)

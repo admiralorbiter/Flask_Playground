@@ -1,0 +1,12 @@
+
+<form id="assignStudentForm" hx-post="{{url_for('assign_project_students', project_id=project.project_id)}}">
+    <label for="studentSelect">Assign Student</label>
+    <select id="studentSelect" name="studentSelect">
+        {% for student in students %}
+            <option value="{{ student.student_id }}">{{ student.first_name }}</option>
+        {% endfor %}
+    </select>
+    <!-- Hidden field to pass the project ID -->
+    <input type="hidden" name="projectId" value="{{ project.project_id }}">
+    <button type="submit">Assign</button>
+</form>

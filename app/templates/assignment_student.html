@@ -36,7 +36,7 @@
     <ul>
         {% for task in tasks %}
             <li>
-                <p>{{ task.title }} - Due: {{ task.due_date.strftime('%B %d, %Y') }}</p>
+                <p>{{ task.name }}</p>
                 <p>{{ task.description }}</p>
             </li>
             

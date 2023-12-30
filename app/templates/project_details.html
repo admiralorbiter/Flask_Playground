@@ -10,9 +10,14 @@ endblock %} {% block content %}
     </p>
     <ul>
       {% for student in project.students %}
-      <li>{{ student.name }}</li>
+      <li>{{ student.first_name }}</li>
       {% endfor %}
     </ul>
+    <!-- Button to trigger modal to assign student -->
+    <button type="button" class="btn btn-primary" hx-get="{{url_for('assign_project_students', project_id=project.project_id)}}" hx-trigger="click" hx-target="#student-assignment-form-container">Assign Student</button>
+
+    <!-- Container where the form will be loaded -->
+    <div id="student-assignment-form-container"></div>
   </div>
   <div class="col-2">
     <p>

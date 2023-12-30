@@ -738,6 +738,24 @@ def toggle_special_functionality(project_id):
     # Render and return the full page (or the part of the page you want to swap)
     return render_template('project_details.html', project=project, special_functionality_enabled=session[session_key])
 
+@app.route('/assign_project_students/<int:project_id>', methods=['GET', 'POST'])
+@login_required
+def assign_project_students(project_id):
+    if not current_user.is_admin:
+        return "Access denied", 403
+    if request.method == 'POST':
+        student_id = request.form.get('studentSelect')
+        project = Project.query.get(project_id)
+        print(student_id)
+        student = Student.query.get(student_id)
+        project.students.append(student)
+        db.session.commit()
+        return ""
+    project = Project.query.get_or_404(project_id)
+    students = Student.query.all()
+    return render_template('assign_project_students.html', project=project, students=students)
+
+
 ## Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##
 # Coaching Page
 # Shows the coaching page
@@ -847,7 +865,8 @@ def assignment_student(student_id):
     student=Student.query.get_or_404(student_id)
     assignments = student.assignments
     projects = student.projects
-    return render_template('assignment_student.html', student=student, assignments=assignments, projects=projects)
+    tasks = student.tasks
+    return render_template('assignment_student.html', student=student, assignments=assignments, projects=projects, tasks=tasks)
 
 # Assignment Manager Page
 # Shows the assignment manager page
