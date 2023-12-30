@@ -869,7 +869,7 @@ def assignment_student(student_id):
     assignments = student.assignments
     projects = student.projects
     tasks = student.tasks
-    return render_template('assignment_student.html', student=student, assignments=assignments, projects=projects, tasks=tasks)
+    return render_template('assignment_student_page.html', student=student, assignments=assignments, projects=projects, tasks=tasks)
 
 # Assignment Manager Page
 # Shows the assignment manager page

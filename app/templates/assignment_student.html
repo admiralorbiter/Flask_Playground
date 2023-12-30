@@ -1,8 +1,3 @@
-{% extends 'base.html' %}
-
-{% block title %}Student Assignments{% endblock %}
-
-{% block content %}
 <h2>Assignments for {{ student.first_name }} {{ student.last_name }}</h2>
 {% if assignments %}
     <ul>
@@ -51,4 +46,3 @@
 {% else %}
     <p>This student has no tasks.</p>
 {% endif %}
-{% endblock %}
