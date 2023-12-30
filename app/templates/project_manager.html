@@ -9,6 +9,7 @@
     <thead>
         <tr>
           <th scope="col">Project</th>
+          <th scope="col">Assigned To</th>
           <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -16,6 +17,11 @@
         {% for project in projects %}
         <tr>
             <td><a href="{{ url_for('project_detail', id=project.project_id) }}">{{ project.name }}</a></td>
+            <td>
+                {% for student in project.students %}
+                    {{ student.first_name }} {{ student.last_name }},
+                {% endfor %}
+            </td>
             <td>
                 {% if current_user.is_authenticated %}
                     <!-- Display delete button -->
