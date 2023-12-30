@@ -10,7 +10,18 @@ endblock %} {% block content %}
     </p>
     <ul>
       {% for student in project.students %}
-      <li>{{ student.first_name }}</li>
+      <li>{{ student.first_name }}
+      {% if current_user.is_authenticated and special_functionality_enabled %}
+      <form method="post"
+            hx-post="{{ url_for('unassign_project_students', project_id=project.project_id) }}"
+            hx-target="closest li"
+            hx-swap="outerHTML">
+          <!-- Hidden field to pass the student ID -->
+          <input type="hidden" name="student_id" value="{{ student.student_id }}">
+          <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+      </form>
+      {% endif %}
+      </li>
       {% endfor %}
     </ul>
     <!-- Button to trigger modal to assign student -->

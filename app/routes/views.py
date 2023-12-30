@@ -755,6 +755,17 @@ def assign_project_students(project_id):
     students = Student.query.all()
     return render_template('assign_project_students.html', project=project, students=students)
 
+@app.route('/unassign_project_students/<int:project_id>', methods=['POST'])
+@login_required
+def unassign_project_students(project_id):
+    if not current_user.is_admin:
+        return "Access denied", 403
+    project = Project.query.get_or_404(project_id)
+    student_id = request.form.get('student_id')
+    student = Student.query.get(student_id)
+    project.students.remove(student)
+    db.session.commit()
+    return ""
 
 ## Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##
 # Coaching Page
