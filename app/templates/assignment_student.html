@@ -1,48 +1,47 @@
 <h2>Assignments for {{ student.first_name }} {{ student.last_name }}</h2>
 {% if assignments %}
-    <ul>
+    <ol>
         {% for assignment in assignments %}
-            <li>
-                <p>{{ assignment.title }} - Due: {{ assignment.due_date.strftime('%B %d, %Y') }}</p>
-                <p>{{ assignment.description }}</p>
-            </li>
-            
+        <li>
+            <p><b>{{ assignment.title }}</b> - Due: {{ assignment.due_date.strftime('%B %d, %Y') }}</p>
+            <p>Description: {{ assignment.description }}</p>
+        </li>
         {% endfor %}
-    </ul>
+    </ol>
 {% else %}
     <p>This student has no assignments.</p>
 {% endif %}
 <h2> Projects </h2>
 {% if projects %}
-    <ul>
+    <ol>
         {% for project in projects %}
             <li>
-                <p>{{ project.title }} - Due: 
+                <p>{{ project.name }} - Due: 
                     {% if project.due_date == None %}
                         No due date
                     {% else %}
                     {{ project.due_date.strftime('%B %d, %Y') }}
                     {% endif %}
                 </p>
-                <p>{{ project.description }}</p>
+                <p>Description: {{ project.description }}</p>
             </li>
             
         {% endfor %}
-    </ul>
+        </ol>
 {% else %}
     <p>This student has no projects.</p>
 {% endif %}
 <h2> Tasks </h2>
 {% if tasks %}
-    <ul>
+    <ol>
         {% for task in tasks %}
             <li>
                 <p>{{ task.name }}</p>
-                <p>{{ task.description }}</p>
+                <p>Description: {{ task.description }}</p>
             </li>
             
         {% endfor %}
-    </ul>
+    </ol>
 {% else %}
     <p>This student has no tasks.</p>
 {% endif %}
