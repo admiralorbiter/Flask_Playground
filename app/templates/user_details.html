@@ -4,15 +4,15 @@
 {% endblock %}
 {% block content %}
     <h1>{{ user.student.first_name }}  {{user.student.last_name}}</h1>
-    <p>{{ user.username }}</p>
+    <p>Username: {{ user.username }}</p>
     <a href="{{ url_for('update_user', id=user.id) }}" class="btn btn-info">Edit User Details</a>
-    <div>
-        <strong>Linked Student: </strong> 
-    </div>
+    {% if user.priority_task %}
     <div>
         <p>Priority Task: {{user.priority_task.name}}</p>
         <p>{{user.priority_task.description}}</p>
     </div>
+    {% endif %}
+    {% if user.is_admin %}
     <div hx-get="/assign_task/{{ user.id }}" hx-trigger="click" hx-target="#task-form">
         <button>Assign Priority Task</button>
     </div>
@@ -26,6 +26,7 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit Comment</button>
     </form>
+    {% endif %}
     <div>
         <strong>Teacher's Comment:</strong>
         <p>{{ user.teacher_comment or 'No comment provided yet.' }}</p>
