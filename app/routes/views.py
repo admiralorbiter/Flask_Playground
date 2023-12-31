@@ -1,3 +1,5 @@
+import csv
+from io import StringIO
 from app import app, db
 from flask import Response, render_template, request, redirect, url_for, flash, session, render_template_string
 from app.models import Student, Project, Task, Link, project_students, Comment, User, Course, Assignment, assignment_students
@@ -758,6 +760,48 @@ def unassign_project_students(project_id):
     project.students.remove(student)
     db.session.commit()
     return ""
+# Import Users
+# Allows admin to import users from a csv file
+@app.route('/import_users', methods=['GET', 'POST'])
+@login_required
+def import_users():
+    # Checks admin, Only admin can import users
+    if not current_user.is_admin:
+        return "Access denied", 403
+
+    if request.method == 'POST':
+        # Check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        print(file.filename)
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in {'csv'}:
+            print("File is a CSV")
+            stream = StringIO(file.stream.read().decode("UTF8"), newline=None)
+            csv_input = csv.reader(stream)
+            next(csv_input, None)  # Skip the header row
+            for row in csv_input:
+                username, password, email, role_id, first_name, last_name = row
+                existing_user = User.query.filter_by(username=username).first()
+                if existing_user is None:
+                    user = User(username=username, email=email, role_id=role_id)
+                    user.set_password(password)
+                    if not role_id == "admin":
+                        student = Student(first_name=first_name.strip(), last_name=last_name.strip(), user=user)
+                    db.session.add(student)
+                    db.session.add(user)
+                    db.session.commit()
+                    print(f'Added user: {username}')
+            return redirect(url_for('some_page_to_show_success'))
+
+    # If it's a GET request or completed POST, render the upload form:
+    return render_template('import_users.html')
 
 ## Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##  Coaching Routes ##
 # Coaching Page
