@@ -790,9 +790,10 @@ def import_users():
                 username, password, email, role_id, first_name, last_name = row
                 existing_user = User.query.filter_by(username=username).first()
                 if existing_user is None:
-                    user = User(username=username, email=email, role_id=role_id)
+                    user = User(username=username, email=email)
+                    user.role.name="admin"
                     user.set_password(password)
-                    if not role_id == "admin":
+                    if not role_id.name == "admin":
                         student = Student(first_name=first_name.strip(), last_name=last_name.strip(), user=user)
                     db.session.add(student)
                     db.session.add(user)
