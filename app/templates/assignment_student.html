@@ -1,47 +1,57 @@
 <h2>Assignments for {{ student.first_name }} {{ student.last_name }}</h2>
 {% if assignments %}
-    <ol>
+    <div class="row">
         {% for assignment in assignments %}
-        <li>
-            <p><b>{{ assignment.title }}</b> - Due: {{ assignment.due_date.strftime('%B %d, %Y') }}</p>
-            <p>Description: {{ assignment.description }}</p>
-        </li>
+        <div class="card col-3 m-1">
+            <p class="card-title"><b>{{ assignment.title }}</b></p>
+            <div class="card-body">
+                <p class="card-text">{{ assignment.description }}</p>
+                <p class="card-text">Due: {{ assignment.due_date.strftime('%B %d, %Y') }}</p>
+                <a href="/assignment/{{ assignment.assignment_id }}" class="btn btn-primary">View</a>
+            </div>
+        </div>
         {% endfor %}
-    </ol>
+    </div>
 {% else %}
     <p>This student has no assignments.</p>
 {% endif %}
 <h2> Projects </h2>
 {% if projects %}
-    <ol>
+    <div class="row">
         {% for project in projects %}
-            <li>
-                <p>{{ project.name }} - Due: 
+        <div class="card col-3 m-1">
+            <h3 class="card-title">{{ project.name }}</h3>
+            <div class="card-body">
+                <p class="card-text">
+                    Due: 
                     {% if project.due_date == None %}
                         No due date
                     {% else %}
                     {{ project.due_date.strftime('%B %d, %Y') }}
                     {% endif %}
                 </p>
-                <p>Description: {{ project.description }}</p>
-            </li>
-            
+                <p class="card-text">Description: {{ project.short_description }}</p>
+                <p class="card-text">Progess: {{project.progress}}</p>
+                <a href="/project/{{ project.project_id }}" class="btn btn-primary">View</a>
+            </div>
+        </div>
         {% endfor %}
-        </ol>
+    </div>
 {% else %}
     <p>This student has no projects.</p>
 {% endif %}
 <h2> Tasks </h2>
 {% if tasks %}
-    <ol>
+    <div class="row">
         {% for task in tasks %}
-            <li>
-                <p>{{ task.name }}</p>
-                <p>Description: {{ task.description }}</p>
-            </li>
-            
+        <div class="card col-3 m-1">
+            <h3 class="card-title">{{ task.name }}</h3>
+            <div class="card-body">
+                <p class="card-text">Description: {{ task.description }}</p>
+            </div>
+        </div>
         {% endfor %}
-    </ol>
+    </div>
 {% else %}
     <p>This student has no tasks.</p>
 {% endif %}
