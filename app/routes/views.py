@@ -862,10 +862,10 @@ def assignment(assignment_id):
 
 # Assignment Student Page
 # Shows all the assignments for a student
-@app.route('/assignment_student/<int:student_id>', methods=['GET'])
+@app.route('/assignment_student/<int:user_id>', methods=['GET'])
 @login_required
-def assignment_student(student_id):
-    student=Student.query.get_or_404(student_id)
+def assignment_student(user_id):
+    student = Student.query.filter_by(user_id=user_id).first()
     assignments = student.assignments
     projects = student.projects
     tasks = student.tasks
