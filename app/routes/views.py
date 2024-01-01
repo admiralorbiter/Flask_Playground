@@ -207,6 +207,9 @@ def delete_user(id):
         return "Access denied", 403
     user = User.query.get_or_404(id)
     try:
+        if user.student:
+            student = user.student
+            db.session.delete(student)
         db.session.delete(user)
         db.session.commit()
     except Exception as e:
