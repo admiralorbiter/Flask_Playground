@@ -7,34 +7,36 @@
     <h2>Assignment Manager</h2>
     <a href="{{ url_for('create_assignment') }}" class="btn btn-success">Create New Assignment</a>
 
-    <div class="assignments-list">
+    <div class="assignments-list row">
         {% for assignment in assignments %}
-        <div class="assignment" id="assignment-{{ assignment.assignment_id }}">
-            <!-- Code below linked to assignment.html -->
-            <h2>{{ assignment.title }}</h2>
-            <p>{{ assignment.description }}</p>
-            <!-- More details can be added here -->
-            <p>Due:
-                {% if assignment.due_date %}
-                    {{ assignment.due_date.strftime('%m/%d/%Y') }}
-                {% else %}
-                    No due date set
+        <div class="assignment card col-3 m-1" id="assignment-{{ assignment.assignment_id }}">
+            <div class="card-body">
+                <!-- Code below linked to assignment.html -->
+                <h2 class="card-title">{{ assignment.title }}</h2>
+                <p>{{ assignment.description }}</p>
+                <!-- More details can be added here -->
+                <p>Due:
+                    {% if assignment.due_date %}
+                        {{ assignment.due_date.strftime('%m/%d/%Y') }}
+                    {% else %}
+                        No due date set
+                    {% endif %}
+                </p>
+                <p>Course: {{ assignment.course.name }}</p>
+                
+                {% if current_user.is_admin %}
+                <div class="row">
+                    <div class="col">
+                        <a href="{{ url_for('update_assignment', assignment_id=assignment.assignment_id) }}" class="btn btn-sm btn-primary">Edit</a>
+                    </div>
+                    <div class="col">
+                        <form hx-post="{{ url_for('delete_assignment', assignment_id=assignment.assignment_id) }}" hx-confirm="Are you sure?" hx-target="#assignment-{{ assignment.assignment_id }}" hx-swap="outerHTML">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
                 {% endif %}
-            </p>
-            <p>Course: {{ assignment.course.name }}</p>
-            
-            {% if current_user.is_admin %}
-            <div class="row">
-                <div class="col-1">
-                    <a href="{{ url_for('update_assignment', assignment_id=assignment.assignment_id) }}" class="btn btn-sm btn-primary">Edit</a>
-                </div>
-                <div class="col-1">
-                    <form hx-post="{{ url_for('delete_assignment', assignment_id=assignment.assignment_id) }}" hx-confirm="Are you sure?" hx-target="#assignment-{{ assignment.assignment_id }}" hx-swap="outerHTML">
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    </form>
-                </div>
             </div>
-            {% endif %}
         </div>
         {% endfor %}
     </div>
