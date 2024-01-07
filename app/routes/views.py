@@ -214,7 +214,7 @@ def delete_user(id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        flash(f'An error occurred while deleting the user: {e}', 'danger')
+        print(f'An error occurred while deleting the user: {e}')
 
     return ""
 
