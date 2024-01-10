@@ -44,6 +44,10 @@
     <form id="assignForm" hx-post="/assign-assignments" hx-target="#response" hx-swap="outerHTML">
         <fieldset>
             <legend>Assign to Students:</legend>
+            <div>
+                <input type="checkbox" id="selectAllStudents" onclick="toggleStudentSelection()">
+                <label for="selectAllStudents">Select All Students</label>
+            </div>
             {% for student in students %}
             <div>
                 <input type="checkbox" id="student{{ student.student_id }}" name="students" value="{{ student.student_id }}">
@@ -66,4 +70,13 @@
     </form>
     <div id="response"></div>
 </div>
+<script>
+    function toggleStudentSelection() {
+        var selectAllCheckbox = document.getElementById('selectAllStudents');
+        var studentCheckboxes = document.querySelectorAll('input[name="students"]');
+        studentCheckboxes.forEach(function(checkbox) {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    }
+</script>
 {% endblock %}

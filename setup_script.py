@@ -41,7 +41,9 @@ def assign_admin(username, password):
                 print(f"Admin user '{username}' created with the password '{password}'.")
 
 if __name__ == '__main__':
-    username = 'jon'  # Replace with your username
-    password = 'nihlism'  # Replace with your desired password
+    # username = 'jon'  # Replace with your username
+    # password = 'nihlism'  # Replace with your desired password
+    username = 'hueyru'
+    password = 'hueyru'
     create_roles()
     assign_admin(username, password)
