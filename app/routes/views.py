@@ -7,12 +7,30 @@ from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from sqlalchemy import delete
-
+import re
+from markupsafe import Markup
 
 #Notes:
 # each time I commit to database, i should have try, except, rollback, flash
 # each time I delete I should confirm with the user like in tasks
 # URGENT: Refactor ID name, currently using project_id, task_id, etc. Should be id, losing too much time on this
+
+# Makes links clickable in a string of text
+def make_clickable_links(text):
+    # Regular expression for finding URLs
+    url_pattern = re.compile(r'(https?://[^\s]+)')
+
+    # Function to replace URLs with HTML anchor tags
+    def replace_with_link(match):
+        url = match.group(0)
+        return f'<a href="{url}" target="_blank">{url}</a>'
+
+    # Replace URLs with links
+    linked_text = url_pattern.sub(replace_with_link, text)
+
+    # Return the text as a Markup object, which marks it as "safe" in Jinja2 templates
+    return Markup(linked_text)
+
 
 # Home Page
 @app.route("/", methods=["GET"])
@@ -925,6 +943,8 @@ def assignment_manager():
     if not current_user.is_admin:
         return "Access denied", 403
     assignments = Assignment.query.all()
+    for assignment in assignments:
+        assignment.description = make_clickable_links(assignment.description)
     students = Student.query.all()
     return render_template('assignment_manager.html', assignments=assignments, students=students)
 
