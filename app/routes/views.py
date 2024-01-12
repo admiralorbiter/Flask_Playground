@@ -922,6 +922,7 @@ def delete_course(course_id):
 @app.route('/assignment/<int:assignment_id>', methods=['GET'])
 def assignment(assignment_id):
     assignment=Assignment.query.get_or_404(assignment_id)
+    assignment.description = make_clickable_links(assignment.description)
     return render_template('assignment.html', assignment=assignment)
 
 # Assignment Student Page
@@ -931,6 +932,8 @@ def assignment(assignment_id):
 def assignment_student(user_id):
     student = Student.query.filter_by(user_id=user_id).first()
     assignments = student.assignments
+    for assignment in assignments:
+        assignment.description = make_clickable_links(assignment.description)
     projects = student.projects
     tasks = student.tasks
     return render_template('assignment_student_page.html', student=student, assignments=assignments, projects=projects, tasks=tasks)
