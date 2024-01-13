@@ -920,10 +920,21 @@ def delete_course(course_id):
 # Assignment Page
 # Shows the assignment page
 @app.route('/assignment/<int:assignment_id>', methods=['GET'])
+@login_required
 def assignment(assignment_id):
-    assignment=Assignment.query.get_or_404(assignment_id)
+    assignment = Assignment.query.get_or_404(assignment_id)
     assignment.description = make_clickable_links(assignment.description)
-    return render_template('assignment.html', assignment=assignment)
+
+    student_submissions = {}
+    if current_user.is_admin:
+        # Fetch all students and their submission status for this assignment
+        students = Student.query.all()
+        for student in students:
+            submission = AssignmentSubmission.query.filter_by(student_id=student.student_id, assignment_id=assignment_id).first()
+            student_submissions[student] = submission
+
+    return render_template('assignment.html', assignment=assignment, student_submissions=student_submissions)
+
 
 # Assignment Student Page
 # Shows all the assignments for a student

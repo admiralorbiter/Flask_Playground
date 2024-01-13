@@ -29,5 +29,40 @@
         </div>
     </div>
     {% endif %}
+    {% if current_user.is_admin %}
+        <!-- Section for admin to view all students and their submission status -->
+        <h2>Student Submissions</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Submitted</th>
+                    <th>Submission Link</th>
+                    <th>Submission Date</th>
+                    <!-- Add more columns as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for student, submission in student_submissions.items() %}
+                <tr>
+                    <td>{{ student.first_name }}</td> 
+                    <td>{{ student.last_name }}</td>
+                    <td>{{ 'Yes' if submission else 'No' }}</td>
+                    <td>
+                        {% if submission %}
+                            <a href="{{ submission.submitted_link }}">{{ submission.submitted_link }}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if submission %}
+                            {{ submission.submission_time.strftime('%m/%d/%Y %H:%M:%S') }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 </div>
 {% endblock %}
