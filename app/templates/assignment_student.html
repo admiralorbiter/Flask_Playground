@@ -8,6 +8,13 @@
                 <p class="card-text">{{ assignment.description }}</p>
                 <p class="card-text">Due: {{ assignment.due_date.strftime('%B %d, %Y') }}</p>
                 <a href="/assignment/{{ assignment.assignment_id }}" class="btn btn-primary">View</a>
+                <!-- Submit Assignment Button -->
+                {% if assignment.is_submitted %}
+                    <p class="text-success">Submitted</p>
+                    <p>Submitted Link: <a href="{{ assignment.submitted_link }}" target="_blank">{{ assignment.submitted_link }}</a></p>
+                {% else %}
+                    <a href="/submit_assignment/{{ assignment.assignment_id }}" class="btn btn-secondary">Submit</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

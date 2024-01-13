@@ -177,3 +177,10 @@ class Course(db.Model):
     subject = db.Column(db.String)
     due_date = db.Column(db.DateTime)
     related_courses = db.Column(db.String)
+
+class AssignmentSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'))
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.assignment_id'))
+    submission_time = db.Column(db.DateTime, default=db.func.current_timestamp())
+    submitted_link = db.Column(db.String(2048))

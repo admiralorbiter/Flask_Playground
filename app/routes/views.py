@@ -2,7 +2,7 @@ import csv
 from io import StringIO
 from app import app, db
 from flask import Response, render_template, request, redirect, url_for, flash, session, render_template_string
-from app.models import Student, Project, Task, Link, project_students, Comment, User, Course, Assignment, assignment_students
+from app.models import AssignmentSubmission, Student, Project, Task, Link, project_students, Comment, User, Course, Assignment, assignment_students
 from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -932,8 +932,21 @@ def assignment(assignment_id):
 def assignment_student(user_id):
     student = Student.query.filter_by(user_id=user_id).first()
     assignments = student.assignments
+
     for assignment in assignments:
         assignment.description = make_clickable_links(assignment.description)
+        print(assignment.assignment_id, user_id)
+        submission = AssignmentSubmission.query.filter_by(student_id=student.user_id, assignment_id=assignment.assignment_id).first()
+        all=AssignmentSubmission.query.all()
+        for sub in all:
+            print(sub.submitted_link)
+            print(sub.id)
+            print(sub.student_id)
+            print(sub.assignment_id)
+        print(submission.submitted_link if submission else None)
+        assignment.is_submitted = bool(submission)
+        assignment.submitted_link = submission.submitted_link if submission else None
+
     projects = student.projects
     tasks = student.tasks
     return render_template('assignment_student_page.html', student=student, assignments=assignments, projects=projects, tasks=tasks)
@@ -1026,3 +1039,33 @@ def assign_assignments():
 
     # Redirect or respond with success message
     return "Assignments successfully assigned!"
+
+@app.route('/submit_assignment/<int:assignment_id>', methods=['GET', 'POST'])
+@login_required
+def submit_assignment(assignment_id):
+    # Check if the assignment exists and if the student is enrolled in the course related to the assignment
+    # You may also want to check if the student has already submitted
+
+    if request.method == 'POST':
+        submitted_link = request.form.get('submitted_link')
+        
+        # Validate the submitted link (optional, but recommended)
+        # For example, check if it's a valid URL
+
+        # Create an AssignmentSubmission instance and save it to the database
+        # You need to replace 'AssignmentSubmission' with your actual submission model
+        new_submission = AssignmentSubmission(student_id=current_user.id, assignment_id=assignment_id, submitted_link=submitted_link)
+        db.session.add(new_submission)
+        print(new_submission.submitted_link)
+        try:
+            db.session.commit()
+            print('Assignment submitted successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            print('An error occurred while submitting the assignment.', 'error')
+
+        # Redirect to a confirmation page or back to the assignment details page
+        return redirect(url_for('assignment_student', user_id=current_user.id))
+
+    # Render the submission form for GET request
+    return render_template('submit_assignment.html', assignment_id=assignment_id)
