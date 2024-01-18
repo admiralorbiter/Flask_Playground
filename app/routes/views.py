@@ -9,6 +9,7 @@ from werkzeug.urls import url_parse
 from sqlalchemy import delete
 import re
 from markupsafe import Markup
+import openai
 
 #Notes:
 # each time I commit to database, i should have try, except, rollback, flash
@@ -832,21 +833,161 @@ def chat():
 
 # Ask
 # Asks the bot a question, currently just returns a test response
+# @app.route('/ask', methods=['POST'])
+# @login_required
+# def ask():
+#     user_query = request.form['query']
+#     # openai.api_key = os.getenv('OPENAI_API_KEY')
+#     # response = openai.Completion.create(engine="davinci", prompt=user_query, max_tokens=150)
+#     # bot_response = response.choices[0].text.strip()
+#     bot_response = "Hello, this is just for testing."
+#     # Create a multi-part response
+#     chat_response = f'<div>{user_query}: {bot_response}</div>'
+#     clear_input_script = '<script>document.getElementById("userQuery").value = "";</script>'
+    
+#     # Combine the chat response and the script to clear the input field
+#     combined_response = chat_response + clear_input_script
+#     return combined_response
+
+import requests
+from flask import request, jsonify
+from os import environ
+from openai import OpenAI
+
+# @app.route('/ask', methods=['POST'])
+# @login_required
+# def ask():
+#     user_query = request.form['query']
+#     # Get your OpenAI API key from an environment variable
+#     api_key = environ.get('OPENAI_API_KEY')
+
+#     # client = OpenAI(
+#     #     organization='YOUR_ORG_ID',
+#     # )
+#     openai.api_key = api_key
+
+#     assistant = openai.beta.assistants.create(
+#         name="Math Tutor",
+#         instructions="You are a personal math tutor. Write and run code to answer math questions.",
+#         tools=[{"type": "code_interpreter"}],
+#         model="gpt-4-1106-preview"
+#     )
+
+#     thread = openai.beta.threads.create()
+
+#     message = openai.beta.threads.messages.create(
+#         thread_id=thread.id,
+#         role="user",
+#         content="I need to solve the equation `3x + 11 = 14`. Can you help me?"
+#     )
+
+#     run = openai.beta.threads.runs.create(
+#         thread_id=thread.id,
+#         assistant_id=assistant.id,
+#         instructions="Please address the user as Jane Doe. The user has a premium account."
+#     )
+    
+#     run = openai.beta.threads.runs.retrieve(
+#         thread_id=thread.id,
+#         run_id=run.id
+#     )
+
+#     messages = openai.beta.threads.messages.list(
+#         thread_id=thread.id
+#     )
+#    # Retrieve messages from the thread
+#     # messages = openai.Message.list(thread_id=thread.id)
+
+#     responses = []
+#     for msg in messages.data[::-1]:  # Iterate in reverse order
+#         print(msg)
+#         role = msg.role
+#         if msg.content and len(msg.content) > 0 and hasattr(msg.content[0], 'text'):
+#             content = msg.content[0].text.value
+#             responses.append({
+#                 "role": role,
+#                 "content": [{
+#                     "data_type": "STRING",
+#                     "value": content
+#                 }]
+#             })
+
+#     # Find the first message where the role is 'assistant' and return its content
+#     for response in responses:
+#         if response["role"] == "assistant":
+#             for content in response["content"]:
+#                 return jsonify(content["value"])  # Return as a JSON response
+
+#     return jsonify({"error": "No assistant response found"})  # Fallback if no assistant response is found
+import threading
+import queue
+
 @app.route('/ask', methods=['POST'])
 @login_required
 def ask():
+    def run_and_store_result(q, thread_id, assistant_id):
+        result = openai.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
+        q.put(result)
+
     user_query = request.form['query']
-    # openai.api_key = os.getenv('OPENAI_API_KEY')
-    # response = openai.Completion.create(engine="davinci", prompt=user_query, max_tokens=150)
-    # bot_response = response.choices[0].text.strip()
-    bot_response = "Hello, this is just for testing."
-    # Create a multi-part response
-    chat_response = f'<div>{user_query}: {bot_response}</div>'
-    clear_input_script = '<script>document.getElementById("userQuery").value = "";</script>'
+    print(user_query)
+
+    # Set the OpenAI API key
+    openai.api_key = environ.get('OPENAI_API_KEY')
+
+    # Create a custom assistant
+    assistant=openai.beta.assistants.create(
+        name="Math Tutor",
+        instructions="You are a personal math tutor. Write and run code to answer math questions.",
+        tools=[{"type": "code_interpreter"}],
+        model="gpt-4-1106-preview"
+    )
+    assistant_id = assistant.id
+
+    # Create a thread
+    thread = openai.beta.threads.create()
+
+    # Post the user's question
+    message = openai.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=user_query
+    )
+
+    q = queue.Queue()
+
+    # Start a new thread to run and store the result
+    run_thread = threading.Thread(target=run_and_store_result, args=(q, thread.id, assistant_id))
+    run_thread.start()
+    run_thread.join()
+    result = q.get()
+
+    # Check the run status and fetch messages
+    responses = []
+    while not run_thread.is_alive():
+        run_status = openai.beta.threads.runs.retrieve(thread_id=thread.id, run_id=result.id)
+        print(run_status.status)
+        if run_status.status == 'completed':
+            messages = openai.beta.threads.messages.list(thread_id=thread.id)
+
+            for msg in messages.data[::-1]:
+                print(msg)
+                role = msg.role
+                content = msg.content[0].text.value
+                responses.append({
+                    "role": role,
+                    "content": content
+                })
+            break
+
+    # Extract and return the assistant's response
+    for response in responses:
+        if response["role"] == "assistant":
+            return jsonify(response["content"])
+
+    return jsonify({"error": "No response from assistant."})
     
-    # Combine the chat response and the script to clear the input field
-    combined_response = chat_response + clear_input_script
-    return combined_response
+
 
 ## Course Routes ##  Course Routes ##  Course Routes ##  Course Routes ##  Course Routes ##  Course Routes ##
 # Course Page
