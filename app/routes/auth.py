@@ -20,7 +20,7 @@ def login():
         login_user(dev_user)
         dev_user.last_login = datetime.utcnow()
         return redirect(url_for('home'))
-     
+    
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     if request.method == 'POST':
@@ -29,7 +29,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user is None or not user.check_password(password):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('auth.login'))
         user.role_id = 'user'
         login_user(user)
         user.last_login = datetime.utcnow()  # Update last_login to the current time
